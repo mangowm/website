@@ -14,7 +14,10 @@
 		"dev:native": "turbo -F native dev",
 		"dev:web": "turbo -F web dev"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"update": "^0.7.4",
+		"vercel": "^48.6.0"
+	},
 	"devDependencies": {
 		"turbo": "^2.5.4",
 		"@biomejs/biome": "^2.2.0"
