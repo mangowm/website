@@ -6,7 +6,7 @@ import { Highlights } from "@/components/highlights";
 
 export default function Home() {
 	return (
-		<main className="min-h-screen bg-background">
+		<main id="main" className="min-h-screen bg-background">
 			<Header />
 			<Hero />
 			<Features />

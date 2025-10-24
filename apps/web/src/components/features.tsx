@@ -93,6 +93,8 @@ export function Features() {
 									muted
 									loop
 									autoPlay
+									preload="none"
+									aria-label={`${feature.title} demonstration video`}
 								/>
 								{hoveredIndex === index && (
 									<div className="absolute inset-0 flex items-center justify-center bg-black/30 transition-colors">

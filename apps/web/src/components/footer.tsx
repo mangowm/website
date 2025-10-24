@@ -17,7 +17,7 @@ export function Footer() {
 							<span className="font-bold text-foreground">MangoWC</span>
 						</div>
 						<p className="text-muted-foreground text-sm">
-							A minimal, fast, and modern web component library.
+							A minimal, fast, and modern Wayland compositor.
 						</p>
 					</div>
 
