@@ -1,64 +1,75 @@
-# MangoWC Web
+# 🍋 MangoWC Web
 
-This website is for **MangoWC**, a lightweight, high-performance Wayland compositor built on dwl. This site provides comprehensive guides, configuration examples, and resources for users and developers.
+**MangoWC Web** is the website for **[MangoWC](https://github.com/DreamMaoMao/mangowc)** — a lightweight, high-performance Wayland compositor built on **dwl**.
+This site provides detailed documentation, configuration guides, and developer resources for both users and contributors.
 
-## Prerequisites
+---
 
-Before you begin, ensure you have the following installed:
+## ⚙️ Installation
 
-- [Bun](https://bun.sh/docs/installation) (recommended) or [Node.js](https://nodejs.org/)
+> **Note:** This project uses [**Bun**](https://bun.com/) as the preferred package manager for its speed and modern features.
 
-## Installation
+### 1. Clone the repository
 
-1. **Clone the repository:**
-   ```bash
-   git clone git@github.com:atheeq-rhxn/mangowc-web.git
-   cd mangowc-web
-   ```
+```bash
+git clone git@github.com:atheeq-rhxn/mangowc-web.git
+cd mangowc-web
+```
 
-2. **Install dependencies:**
-   ```bash
-   bun install
-   ```
+### 2. Install dependencies
 
-3. **Set up environment variables (optional):**
-   Create a `.env` file in the `apps/web` directory and configure any required variables based on `.env.example`.
+```bash
+bun install
+```
 
-## Development
+### 3. (Optional) Set up environment variables
 
-1. **Start the development server:**
-   ```bash
-   bun run dev
-   ```
+If needed, create a `.env` file inside the `apps/web` directory and adjust values based on `.env.example`.
 
-2. **Open your browser:**
-   Navigate to [http://localhost:3001](http://localhost:3001) to view the site.
+---
 
-### Available Scripts
+## 🚀 Development
 
-- `bun run dev` - Start the development server
-- `bun run build` - Build the application for production
-- `bun run check` - Run linting and formatting with Biome
-- `bun run check-types` - Run TypeScript type checking
+### Start the development server
 
-## Project Structure
+```bash
+bun run dev
+```
+
+Once running, open [http://localhost:3001](http://localhost:3001) in your browser.
+
+---
+
+## 🧰 Available Scripts
+
+| Command               | Description                                |
+| --------------------- | ------------------------------------------ |
+| `bun run dev`         | Start the local development server         |
+| `bun run build`       | Build the site for production              |
+| `bun run check`       | Run linting and formatting using **Biome** |
+| `bun run check-types` | Perform TypeScript type checking           |
+
+---
+
+## 🏗️ Project Structure
 
 ```
 mangowc-web/
+├── docs/                     # Markdown/MDX documentation content
 ├── apps/
-│   └── web/                 # Main Next.js application
-│       ├── content/docs/    # Documentation content (MDX)
+│   └── web/                  # Main Next.js application
 │       ├── src/
-│       │   ├── app/         # Next.js app router pages
-│       │   ├── components/  # Reusable UI components
-│       │   └── lib/         # Utility functions and configurations
-│       └── public/          # Static assets
-├── packages/                # Shared packages (if any)
-└── turbo.json               # Monorepo configuration
+│       │   ├── app/          # Next.js App Router pages
+│       │   ├── components/   # Shared UI components
+│       │   └── lib/          # Configurations & utilities
+│       └── public/           # Static assets
+└── turbo.json                # Turborepo configuration
 ```
 
-## Links
+---
 
-- 🌐 **Live Site**: [https://mangowc.vercel.app](https://mangowc.vercel.app)
-- 📖 **MangoWC Repository**: [https://github.com/DreamMaoMao/mangowc](https://github.com/DreamMaoMao/mangowc)
-- 📚 **Documentation**: [https://mangowc.vercel.app/docs](https://mangowc.vercel.app/docs)
+## 🌐 Links
+
+* **Live Site:** [https://mangowc.vercel.app](https://mangowc.vercel.app)
+* **Core Project:** [DreamMaoMao/mangowc](https://github.com/DreamMaoMao/mangowc)
+* **Documentation:** [https://mangowc.vercel.app/docs](https://mangowc.vercel.app/docs)
