@@ -9,11 +9,7 @@ import {
 	TOTAL_DURATION,
 } from "./constants";
 
-interface RightTileLayoutProps {
-	orientation: "horizontal" | "vertical";
-}
-
-export function RightTileLayout({ orientation }: RightTileLayoutProps) {
+export function RightTileLayout() {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const r1 = useRef<HTMLDivElement>(null);
 	const r2 = useRef<HTMLDivElement>(null);
@@ -40,16 +36,11 @@ export function RightTileLayout({ orientation }: RightTileLayoutProps) {
 			const gap = 16;
 
 			// Horizontal Calculations (Master Right, Stack Left)
+			// This layout is strictly horizontal as requested.
 			const h_halfW = (width - gap) / 2;
 			const h_halfH = (height - gap) / 2;
 			const h_rightX = h_halfW + gap;
 			const h_bottomY = h_halfH + gap;
-
-			// Vertical Calculations (Master Bottom, Stack Top)
-			const v_halfW = (width - gap) / 2;
-			const v_halfH = (height - gap) / 2;
-			const v_rightX = v_halfW + gap;
-			const v_bottomY = v_halfH + gap;
 
 			const set = (
 				el: HTMLDivElement | null,
@@ -71,8 +62,6 @@ export function RightTileLayout({ orientation }: RightTileLayoutProps) {
 				el.className = cn(CARD_BASE, active ? CARD_ACTIVE : CARD_INACTIVE);
 			};
 
-			const isVert = orientation === "vertical";
-
 			// --- Phase Logic ---
 			// 0: Init
 			// 1: Spawn 1
@@ -84,15 +73,6 @@ export function RightTileLayout({ orientation }: RightTileLayoutProps) {
 			// 7: Despawn 2
 			// 8: Despawn 1
 
-			// Determine Focus
-			let focusedWindow = 1;
-			if (phase === 2) focusedWindow = 2;
-			else if (phase >= 3 && phase <= 5)
-				focusedWindow = 3; // Keep focus on 3 during Swap & Return
-			else if (phase === 6)
-				focusedWindow = 2; // Focus 2 when 3 leaves
-			else if (phase >= 7) focusedWindow = 1; // Focus 1 when 2 leaves
-
 			// Determine Active Windows Count
 			let activeWindows = 0;
 			if (phase >= 1) activeWindows = 1;
@@ -101,101 +81,81 @@ export function RightTileLayout({ orientation }: RightTileLayoutProps) {
 			if (phase === 6) activeWindows = 2;
 			if (phase >= 7) activeWindows = 1;
 
-			// Is Swap State?
+			// Is Swap State? (Only Phase 4)
 			const isSwap = phase === 4;
 
-			// --- Calculate Rects based on Orientation ---
+			// Determine Focus
+			let focusedWindow = 1;
+			if (phase === 2) focusedWindow = 2;
+			else if (phase >= 3 && phase <= 5) focusedWindow = 3; // Keep focus on 3 during Swap & Return
+			else if (phase === 6) focusedWindow = 2; // Focus 2 when 3 leaves
+			else if (phase >= 7) focusedWindow = 1; // Focus 1 when 2 leaves
 
+			// --- Calculate Rects based on Horizontal Orientation ---
+			
 			// Define standard positions (Normal State)
-			// Pos 0: Master (Right/Bottom)
-			// Pos 1: Stack 1 (Top/Left)
-			// Pos 2: Stack 2 (Bottom/Right of Stack area)
-			let pos0!: { x: number; y: number; w: number; h: number };
-			let pos1!: { x: number; y: number; w: number; h: number };
-			let pos2!: { x: number; y: number; w: number; h: number };
+			// Pos 0: Master (Right)
+			// Pos 1: Stack 1 (Top Left)
+			// Pos 2: Stack 2 (Bottom Left)
+			let pos0, pos1, pos2;
 
-			if (isVert) {
-				// Vertical: Master Bottom
-				if (activeWindows === 1) {
-					pos0 = { x: 0, y: 0, w: width, h: height };
-				} else if (activeWindows === 2) {
-					// Master Bottom, Stack Top
-					pos0 = { x: 0, y: v_bottomY, w: width, h: v_halfH };
-					pos1 = { x: 0, y: 0, w: width, h: v_halfH };
-				} else {
-					// Master Bottom
-					pos0 = { x: 0, y: v_bottomY, w: width, h: v_halfH };
-					// Stack Top (Split Left/Right)
-					pos1 = { x: 0, y: 0, w: v_halfW, h: v_halfH };
-					pos2 = { x: v_rightX, y: 0, w: v_halfW, h: v_halfH };
-				}
+			// Horizontal Only Logic: Master Right, Stack Left
+			if (activeWindows === 1) {
+				pos0 = { x: 0, y: 0, w: width, h: height };
+			} else if (activeWindows === 2) {
+				// Master Right, Stack Left
+				pos0 = { x: h_rightX, y: 0, w: h_halfW, h: height };
+				pos1 = { x: 0, y: 0, w: h_halfW, h: height };
 			} else {
-				// Horizontal: Master Right
-				if (activeWindows === 1) {
-					pos0 = { x: 0, y: 0, w: width, h: height };
-				} else if (activeWindows === 2) {
-					// Master Right, Stack Left
-					pos0 = { x: h_rightX, y: 0, w: h_halfW, h: height };
-					pos1 = { x: 0, y: 0, w: h_halfW, h: height };
-				} else {
-					// Master Right
-					pos0 = { x: h_rightX, y: 0, w: h_halfW, h: height };
-					// Stack Left (Split Top/Bottom)
-					pos1 = { x: 0, y: 0, w: h_halfW, h: h_halfH };
-					pos2 = { x: 0, y: h_bottomY, w: h_halfW, h: h_halfH };
-				}
+				// Master Right
+				pos0 = { x: h_rightX, y: 0, w: h_halfW, h: height };
+				// Stack Left (Split Top/Bottom)
+				// Stack fills top to bottom
+				pos1 = { x: 0, y: 0, w: h_halfW, h: h_halfH };
+				pos2 = { x: 0, y: h_bottomY, w: h_halfW, h: h_halfH };
 			}
 
 			// --- Apply to Windows ---
 
 			// Window 1 (Master)
+			// Normal: pos0
+			// Swap: pos2 (Swaps with 3rd window)
 			let target1 = pos0;
-			// Swap with Stack 2 (pos2)
 			if (isSwap && activeWindows === 3) target1 = pos2;
-
+			
 			set(
-				r1.current,
-				target1?.x ?? 0,
-				target1?.y ?? 0,
-				target1?.w ?? 0,
-				target1?.h ?? 0,
+				r1.current, target1?.x ?? 0, target1?.y ?? 0, target1?.w ?? 0, target1?.h ?? 0,
 				phase > 0 && phase < 8,
-				focusedWindow === 1,
+				focusedWindow === 1
 			);
 
 			// Window 2 (Stack 1)
+			// Usually the "stable" stack window (Top-Left in stack area)
+			// Does not move during swap
 			let target2 = pos1;
+			
 			set(
-				r2.current,
-				target2?.x ?? 0,
-				target2?.y ?? 0,
-				target2?.w ?? 0,
-				target2?.h ?? 0,
+				r2.current, target2?.x ?? 0, target2?.y ?? 0, target2?.w ?? 0, target2?.h ?? 0,
 				phase >= 2 && phase < 7,
-				focusedWindow === 2,
+				focusedWindow === 2
 			);
 
 			// Window 3 (Stack 2)
+			// Normal: pos2 (Bottom/Left of stack area)
+			// Swap: pos0 (Master)
 			let target3 = pos2;
-			// Swap with Master (pos0)
 			if (isSwap && activeWindows === 3) target3 = pos0;
 
 			// Pre-position for entry
 			if (activeWindows < 3) {
-				// Enter from Bottom-Right or appropriate corner
-				target3 = isVert
-					? { x: v_rightX, y: 0, w: v_halfW, h: v_halfH }
-					: { x: 0, y: h_bottomY, w: h_halfW, h: h_halfH };
+				// Entry position: Opposite of Master (Bottom Left)
+				target3 = { x: 0, y: h_bottomY, w: h_halfW, h: h_halfH };
 			}
 
 			set(
-				r3.current,
-				target3?.x ?? 0,
-				target3?.y ?? 0,
-				target3?.w ?? 0,
-				target3?.h ?? 0,
+				r3.current, target3?.x ?? 0, target3?.y ?? 0, target3?.w ?? 0, target3?.h ?? 0,
 				phase >= 3 && phase < 6,
-				focusedWindow === 3,
+				focusedWindow === 3
 			);
 		};
 
@@ -203,7 +163,7 @@ export function RightTileLayout({ orientation }: RightTileLayoutProps) {
 		const ro = new ResizeObserver(update);
 		ro.observe(containerRef.current as Element);
 		return () => ro.disconnect();
-	}, [phase, orientation]);
+	}, [phase]); // Removed orientation dependency
 
 	// Loop Timing
 	useEffect(() => {
