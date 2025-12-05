@@ -50,7 +50,7 @@ export function Header() {
 	const { setOpenSearch } = useSearchContext();
 
 	return (
-		<header className="border-border border-b bg-background/95">
+		<header className="sticky top-0 z-50 border-border border-b bg-background/80 backdrop-blur-md">
 			<div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
 				<div className="flex items-center gap-8">
 					<Link href="/" className="group flex items-center gap-2">
