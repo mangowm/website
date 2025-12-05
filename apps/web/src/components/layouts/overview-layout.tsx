@@ -75,7 +75,7 @@ export function OverviewLayout() {
 				const totalGapW = Math.max(0, cols - 1) * GAP;
 				const totalGapH = Math.max(0, rows - 1) * GAP;
 
-				let cellW = (availableW - totalGapW) / cols;
+				const cellW = (availableW - totalGapW) / cols;
 				let cellH = (availableH - totalGapH) / rows;
 
 				// Aspect Ratio Constraint

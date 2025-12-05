@@ -80,7 +80,7 @@ export function DeckLayout() {
 			else if (phase === 2) activeWindows = 2;
 			else if (phase >= 3 && phase <= 5) activeWindows = 3;
 			else if (phase === 6) activeWindows = 2;
-			else if (phase === 7) activeWindows = 1; 
+			else if (phase === 7) activeWindows = 1;
 			else if (phase === 8) activeWindows = 1;
 
 			if (phase === 4) isSwap = true;
@@ -88,7 +88,8 @@ export function DeckLayout() {
 			// --- Focus Logic ---
 			let focusedWindow = 1;
 			if (phase === 2) focusedWindow = 2;
-			else if (phase >= 3 && phase <= 5) focusedWindow = 3; // Focus 3 during Swap/Return
+			else if (phase >= 3 && phase <= 5)
+				focusedWindow = 3; // Focus 3 during Swap/Return
 			else if (phase === 6) focusedWindow = 2;
 			else if (phase >= 7) focusedWindow = 1;
 
@@ -98,57 +99,71 @@ export function DeckLayout() {
 			// Rule 2: Active Window gets huge boost (+20) to always be on top
 			const getZIndex = (id: number) => {
 				let z = id; // Base: 1, 2, 3
-				
+
 				// Swap Rule: Window 1 sits above Window 2
 				if (id === 1 && isSwap) z = 10;
-				
+
 				// Active Rule: Focused window is always highest
 				if (focusedWindow === id) z += 20;
-				
+
 				return z;
 			};
 
 			// --- Apply Positions ---
 
 			// Window 1 (Master)
-			if (phase < 8) { 
+			if (phase < 8) {
 				// Logic: N=1 (Phase 0,1,7,8) -> Full Screen. Else Master Rect.
 				const isFull = activeWindows === 1;
-				const target = isFull ? { x: 0, y: 0, w: width, h: height } : masterRect;
-				
+				const target = isFull
+					? { x: 0, y: 0, w: width, h: height }
+					: masterRect;
+
 				const p = isSwap ? stackRect : target;
-				
+
 				set(
-					r1.current, p.x, p.y, p.w, p.h,
-					phase >= 1, 
+					r1.current,
+					p.x,
+					p.y,
+					p.w,
+					p.h,
+					phase >= 1,
 					focusedWindow === 1,
-					getZIndex(1)
+					getZIndex(1),
 				);
 			} else {
 				set(r1.current, 0, 0, width, height, false, false, 1);
 			}
 
 			// Window 2 (Stack Bottom)
-			if (phase < 7) { 
+			if (phase < 7) {
 				const target = stackRect;
 				set(
-					r2.current, target.x, target.y, target.w, target.h,
+					r2.current,
+					target.x,
+					target.y,
+					target.w,
+					target.h,
 					phase >= 2,
 					focusedWindow === 2,
-					getZIndex(2)
+					getZIndex(2),
 				);
 			} else {
 				set(r2.current, width, 0, halfW, height, false, false, 2);
 			}
 
 			// Window 3 (Stack Top)
-			if (phase < 6) { 
+			if (phase < 6) {
 				const p = isSwap ? masterRect : stackRect;
 				set(
-					r3.current, p.x, p.y, p.w, p.h,
+					r3.current,
+					p.x,
+					p.y,
+					p.w,
+					p.h,
 					phase >= 3,
 					focusedWindow === 3,
-					getZIndex(3)
+					getZIndex(3),
 				);
 			} else {
 				set(r3.current, width, 0, halfW, height, false, false, 3);

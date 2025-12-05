@@ -1,14 +1,14 @@
 "use client";
 
-import { motion } from "motion/react";
 import {
-	Zap,
 	Grid3X3,
-	Sparkles,
-	Monitor,
 	Layers,
+	Monitor,
 	Settings,
+	Sparkles,
+	Zap,
 } from "lucide-react";
+import { motion } from "motion/react";
 import { highlights } from "@/lib/data";
 
 const iconMap = {
@@ -62,8 +62,8 @@ export function Highlights() {
 								transition={{ duration: 0.5 }}
 								className="rounded-lg border border-border bg-background p-6 transition-colors hover:border-primary"
 							>
-								<div className="flex items-center gap-3 mb-3">
-									<IconComponent className="h-5 w-5 text-primary flex-shrink-0" />
+								<div className="mb-3 flex items-center gap-3">
+									<IconComponent className="h-5 w-5 flex-shrink-0 text-primary" />
 									<h3 className="font-bold text-foreground text-lg">
 										{highlight.title}
 									</h3>

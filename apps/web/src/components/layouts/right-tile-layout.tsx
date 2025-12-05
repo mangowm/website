@@ -86,12 +86,14 @@ export function RightTileLayout() {
 			// Determine Focus
 			let focusedWindow = 1;
 			if (phase === 2) focusedWindow = 2;
-			else if (phase >= 3 && phase <= 5) focusedWindow = 3; // Keep focus on 3 during Swap & Return
-			else if (phase === 6) focusedWindow = 2; // Focus 2 when 3 leaves
+			else if (phase >= 3 && phase <= 5)
+				focusedWindow = 3; // Keep focus on 3 during Swap & Return
+			else if (phase === 6)
+				focusedWindow = 2; // Focus 2 when 3 leaves
 			else if (phase >= 7) focusedWindow = 1; // Focus 1 when 2 leaves
 
 			// --- Calculate Rects based on Horizontal Orientation ---
-			
+
 			// Initialize with safe defaults to prevent TypeScript errors
 			let pos0 = { x: 0, y: 0, w: 0, h: 0 };
 			let pos1 = { x: 0, y: 0, w: 0, h: 0 };
@@ -126,24 +128,30 @@ export function RightTileLayout() {
 			// Swap: pos2 (Swaps with 3rd window)
 			let target1 = pos0;
 			if (isSwap && activeWindows === 3) target1 = pos2;
-			
+
 			set(
-				r1.current, 
-				target1.x, target1.y, target1.w, target1.h,
+				r1.current,
+				target1.x,
+				target1.y,
+				target1.w,
+				target1.h,
 				phase > 0 && phase < 8,
-				focusedWindow === 1
+				focusedWindow === 1,
 			);
 
 			// Window 2 (Stack 1)
 			// Usually the "stable" stack window (Top-Left in stack area)
 			// Does not move during swap
-			let target2 = pos1;
-			
+			const target2 = pos1;
+
 			set(
-				r2.current, 
-				target2.x, target2.y, target2.w, target2.h,
+				r2.current,
+				target2.x,
+				target2.y,
+				target2.w,
+				target2.h,
 				phase >= 2 && phase < 7,
-				focusedWindow === 2
+				focusedWindow === 2,
 			);
 
 			// Window 3 (Stack 2)
@@ -159,10 +167,13 @@ export function RightTileLayout() {
 			}
 
 			set(
-				r3.current, 
-				target3.x, target3.y, target3.w, target3.h,
+				r3.current,
+				target3.x,
+				target3.y,
+				target3.w,
+				target3.h,
 				phase >= 3 && phase < 6,
-				focusedWindow === 3
+				focusedWindow === 3,
 			);
 		};
 
@@ -170,7 +181,7 @@ export function RightTileLayout() {
 		const ro = new ResizeObserver(update);
 		ro.observe(containerRef.current as Element);
 		return () => ro.disconnect();
-	}, [phase]); 
+	}, [phase]);
 
 	// Loop Timing
 	useEffect(() => {

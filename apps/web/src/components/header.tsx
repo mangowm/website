@@ -86,7 +86,7 @@ export function Header() {
 					<button
 						type="button"
 						onClick={() => setOpenSearch(true)}
-						className="text-foreground/70 transition-colors hover:text-primary cursor-pointer"
+						className="cursor-pointer text-foreground/70 transition-colors hover:text-primary"
 						aria-label="Search documentation"
 					>
 						<Search className="h-5 w-5" />
@@ -150,7 +150,7 @@ export function Header() {
 
 			{/* Mobile Navigation */}
 			{isMobileMenuOpen && (
-				<nav className="mobile-nav border-border border-t md:hidden bg-background">
+				<nav className="mobile-nav border-border border-t bg-background md:hidden">
 					<div className="mx-auto max-w-7xl space-y-1 px-4 py-3 sm:px-6 lg:px-8">
 						<Link
 							href="/"

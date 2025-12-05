@@ -18,30 +18,23 @@ export function Hero() {
 				{/* Left Column */}
 				<div className="flex-1 text-center lg:text-left">
 					<div className="mb-5 inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1">
-						<span className="font-mono text-xs sm:text-sm font-semibold text-primary">
+						<span className="font-mono font-semibold text-primary text-xs sm:text-sm">
 							Wayland Compositor
 						</span>
 					</div>
 
-					<h1 className="mb-6 text-4xl font-bold leading-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl text-balance">
+					<h1 className="mb-6 text-balance font-bold text-4xl text-foreground leading-tight sm:text-5xl md:text-6xl lg:text-7xl">
 						Lightweight, <span className="text-primary">Feature-Rich</span>
 					</h1>
 
-					<p className="mx-auto mb-10 max-w-xl text-base text-muted-foreground sm:text-lg md:text-xl lg:mx-0 text-balance">
+					<p className="mx-auto mb-10 max-w-xl text-balance text-base text-muted-foreground sm:text-lg md:text-xl lg:mx-0">
 						MangoWC is a modern, lightweight, high-performance Wayland
 						compositor built on dwl — crafted for speed, flexibility, and a
 						customizable desktop experience.
 					</p>
 
 					{/* Buttons */}
-					<div
-						className="
-						flex flex-col gap-4
-						items-center
-						sm:flex-row sm:justify-center
-						lg:justify-start
-					"
-					>
+					<div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center lg:justify-start">
 						<Link
 							href="/docs/installation"
 							className="rounded-full bg-primary px-8 py-3 font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-transform hover:scale-[1.04] hover:opacity-90"
@@ -61,7 +54,7 @@ export function Hero() {
 				</div>
 
 				{/* Right Column */}
-				<div className="flex-1 w-full lg:max-w-[55%]">
+				<div className="w-full flex-1 lg:max-w-[55%]">
 					<div className="w-full">
 						<MangowcLayouts />
 					</div>

@@ -113,7 +113,8 @@ export function CenterTileLayout({ orientation }: CenterTileLayoutProps) {
 			// --- Focus Logic ---
 			let focusedWindow = 1;
 			if (phase === 2) focusedWindow = 2;
-			else if (phase >= 3 && phase <= 5) focusedWindow = 3; // Keep focus on 3 during Swap & Return
+			else if (phase >= 3 && phase <= 5)
+				focusedWindow = 3; // Keep focus on 3 during Swap & Return
 			else if (phase === 6) focusedWindow = 2;
 			else if (phase >= 7) focusedWindow = 1;
 

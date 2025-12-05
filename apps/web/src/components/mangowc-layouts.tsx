@@ -1,22 +1,21 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
 import { ChevronDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useEffect, useRef, useState } from "react";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
+import { CenterTileLayout } from "./layouts/center-tile-layout";
+import { DeckLayout } from "./layouts/deck-layout";
+import { GridLayout } from "./layouts/grid-layout";
+import { MonocleLayout } from "./layouts/monocle-layout";
+import { OverviewLayout } from "./layouts/overview-layout";
+import { RightTileLayout } from "./layouts/right-tile-layout";
 import { ScrollerLayout } from "./layouts/scroller-layout";
 import { TileLayout } from "./layouts/tile-layout";
-import { GridLayout } from "./layouts/grid-layout";
-import { OverviewLayout } from "./layouts/overview-layout";
-import { CenterTileLayout } from "./layouts/center-tile-layout";
-import { MonocleLayout } from "./layouts/monocle-layout";
-import { DeckLayout } from "./layouts/deck-layout";
-import { RightTileLayout } from "./layouts/right-tile-layout";
-import { TOTAL_DURATION } from "./layouts/constants";
 
 export function MangowcLayouts() {
 	const [activeLayout, setActiveLayout] = useState<
@@ -132,7 +131,7 @@ export function MangowcLayouts() {
 							<button
 								type="button"
 								className={cn(
-									"flex cursor-pointer items-center gap-1 rounded-full px-4 py-1.5 font-medium text-sm transition-all outline-none",
+									"flex cursor-pointer items-center gap-1 rounded-full px-4 py-1.5 font-medium text-sm outline-none transition-all",
 									isOtherActive
 										? "bg-background text-primary shadow-sm"
 										: "text-muted-foreground hover:text-foreground",
@@ -205,56 +204,6 @@ export function MangowcLayouts() {
 									Monocle
 								</span>
 							</DropdownMenuItem>
-							<DropdownMenuItem
-								onClick={() => setActiveLayout("deck")}
-								className="cursor-pointer"
-							>
-								<span
-									className={cn(
-										activeLayout === "deck" && "font-semibold text-primary",
-									)}
-								>
-									Deck
-								</span>
-							</DropdownMenuItem>
-							<DropdownMenuItem
-								onClick={() => setActiveLayout("center-tile")}
-								className="cursor-pointer"
-							>
-								<span
-									className={cn(
-										activeLayout === "center-tile" &&
-											"font-semibold text-primary",
-									)}
-								>
-									Center Tile
-								</span>
-							</DropdownMenuItem>
-							<DropdownMenuItem
-								onClick={() => setActiveLayout("right-tile")}
-								className="cursor-pointer"
-							>
-								<span
-									className={cn(
-										activeLayout === "right-tile" &&
-											"font-semibold text-primary",
-									)}
-								>
-									Right Tile
-								</span>
-							</DropdownMenuItem>
-							<DropdownMenuItem
-								onClick={() => setActiveLayout("monocle")}
-								className="cursor-pointer"
-							>
-								<span
-									className={cn(
-										activeLayout === "monocle" && "font-semibold text-primary",
-									)}
-								>
-									Monocle
-								</span>
-							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
 				</div>
@@ -262,7 +211,7 @@ export function MangowcLayouts() {
 				<div
 					className={cn(
 						"inline-flex rounded-full border border-border bg-muted p-1 transition-opacity",
-						isOtherActive ? "opacity-50 pointer-events-none" : "",
+						isOtherActive ? "pointer-events-none opacity-50" : "",
 					)}
 				>
 					<button

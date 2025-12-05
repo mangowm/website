@@ -95,15 +95,17 @@ export function TileLayout({ orientation }: TileLayoutProps) {
 			// Determine Focus
 			let focusedWindow = 1;
 			if (phase === 2) focusedWindow = 2;
-			else if (phase >= 3 && phase <= 5) focusedWindow = 3; // Keep focus on 3 during Swap & Return
-			else if (phase === 6) focusedWindow = 2; // Focus 2 when 3 leaves
+			else if (phase >= 3 && phase <= 5)
+				focusedWindow = 3; // Keep focus on 3 during Swap & Return
+			else if (phase === 6)
+				focusedWindow = 2; // Focus 2 when 3 leaves
 			else if (phase >= 7) focusedWindow = 1; // Focus 1 when 2 leaves
 
 			// Is Swap State?
 			const isSwap = phase === 4;
 
 			// --- Calculate Rects based on Orientation ---
-			
+
 			// Define standard positions (Normal State)
 			// Pos 0: Master
 			// Pos 1: Stack 1
@@ -131,7 +133,7 @@ export function TileLayout({ orientation }: TileLayoutProps) {
 				if (activeWindows === 1) {
 					pos0 = { x: 0, y: 0, w: width, h: height };
 					// Pre-calculate stack positions
-					pos1 = { x: h_rightX, y: 0, w: h_halfW, h: height }; 
+					pos1 = { x: h_rightX, y: 0, w: h_halfW, h: height };
 					pos2 = { x: h_rightX, y: h_bottomY, w: h_halfW, h: h_halfH };
 				} else if (activeWindows === 2) {
 					pos0 = { x: 0, y: 0, w: h_halfW, h: height };
@@ -149,19 +151,27 @@ export function TileLayout({ orientation }: TileLayoutProps) {
 			// Window 1
 			let target1 = pos0;
 			if (isSwap && activeWindows === 3) target1 = pos2;
-			
+
 			set(
-				r1.current, target1.x, target1.y, target1.w, target1.h,
+				r1.current,
+				target1.x,
+				target1.y,
+				target1.w,
+				target1.h,
 				phase > 0 && phase < 8,
-				focusedWindow === 1
+				focusedWindow === 1,
 			);
 
 			// Window 2
-			let target2 = pos1;
+			const target2 = pos1;
 			set(
-				r2.current, target2.x, target2.y, target2.w, target2.h,
+				r2.current,
+				target2.x,
+				target2.y,
+				target2.w,
+				target2.h,
 				phase >= 2 && phase < 7,
-				focusedWindow === 2
+				focusedWindow === 2,
 			);
 
 			// Window 3
@@ -169,9 +179,13 @@ export function TileLayout({ orientation }: TileLayoutProps) {
 			if (isSwap && activeWindows === 3) target3 = pos0;
 
 			set(
-				r3.current, target3.x, target3.y, target3.w, target3.h,
+				r3.current,
+				target3.x,
+				target3.y,
+				target3.w,
+				target3.h,
 				phase >= 3 && phase < 6,
-				focusedWindow === 3
+				focusedWindow === 3,
 			);
 		};
 

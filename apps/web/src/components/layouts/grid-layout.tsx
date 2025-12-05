@@ -178,8 +178,10 @@ export function GridLayout({ orientation }: GridLayoutProps) {
 			// --- Focus Logic ---
 			let focusedWindow = 1;
 			if (phase === 2) focusedWindow = 2;
-			else if (phase >= 3 && phase <= 5) focusedWindow = 3; // Keep focus on 3 during Swap & Return
-			else if (phase === 6) focusedWindow = 2; // Focus 2 when 3 leaves
+			else if (phase >= 3 && phase <= 5)
+				focusedWindow = 3; // Keep focus on 3 during Swap & Return
+			else if (phase === 6)
+				focusedWindow = 2; // Focus 2 when 3 leaves
 			else if (phase >= 7) focusedWindow = 1; // Focus 1 when 2 leaves
 
 			const pos = calculateGrid(activeWindows);
