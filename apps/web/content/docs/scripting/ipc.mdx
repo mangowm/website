@@ -17,34 +17,66 @@ The general syntax for `mmsg` is:
 mmsg [options] [arguments]
 ```
 
-### Common Flags
+### Options
 
 | Flag | Description |
 | :--- | :--- |
+| `-q` | Quit MangoWC. |
 | `-g` | **Get** values (tags, layout, focused client). |
 | `-s` | **Set** values (switch tags, layouts). |
-| `-w` | **Watch** mode (continuously print events). |
-| `-d` | **Dispatch** a command (execute internal functions). |
-| `-O` | Get output (monitor) information. |
+| `-w` | **Watch** mode (streams events as JSON). |
+| `-O` | Get all output (monitor) information. |
+| `-T` | Get number of tags. |
+| `-L` | Get all available layouts. |
+| `-o` | Select output (monitor). |
+| `-t` | Get/set selected tags (set with `[+-^.]`). |
+| `-l` | Get/set current layout. |
+| `-c` | Get title and appid of focused client. |
+| `-v` | Get visibility of statusbar. |
+| `-m` | Get fullscreen status. |
+| `-f` | Get floating status. |
+| `-d` | **Dispatch** an internal command. |
+| `-x` | Get focused client geometry. |
+| `-e` | Get the name of the last focused layer. |
+| `-k` | Get current keyboard layout. |
+| `-b` | Get current keybind mode. |
+| `-A` | Get scale factor of monitor. |
 
 ## Examples
 
-### Controlling Windows & Tags
+### Tag Management
+
+You can perform arithmetic on tags using the `-t` flag with `-s` (set).
 
 ```bash
 # Switch to Tag 1
 mmsg -t 1
 
-# Toggle current window to Tag 2
-mmsg -s -t 2^
+# Add Tag 2 to current view (Multiview)
+mmsg -s -t 2+
 
-# Move window to Tag 3
-mmsg -s -t 3+
+# Remove Tag 2 from current view
+mmsg -s -t 2-
+
+# Toggle Tag 2
+mmsg -s -t 2^
 ```
 
-### Executing Commands (Dispatch)
+### Layouts
 
-You can run any internal dispatcher (like those bound to keys) via the `-d` flag.
+Switch layouts programmatically. Layout codes: `S` (Scroller), `T` (Tile), `G` (Grid), `M` (Monocle), `K` (Deck), `VS` (Vertical Scroller), `VT` (Vertical Tile), `CT` (Center Tile).
+
+```bash
+# Switch to Scroller
+mmsg -l "S"
+
+# Switch to Tile
+mmsg -l "T"
+```
+
+### Dispatching Commands
+
+Any command available in `config.conf` keybindings can be run via IPC.
 
 ```bash
 # Close the focused window
@@ -55,19 +87,53 @@ mmsg -d resizewin,+10,0
 
 # Toggle fullscreen
 mmsg -d togglefullscreen
+
+# Disable a monitor power
+mmsg -d disable_monitor,eDP-1
 ```
 
-### Scripting & Monitoring
+### Monitoring & Status
 
 Use `-g` or `-w` to build custom status bars or automation scripts.
 
 ```bash
-# Get JSON-like info about the focused client
+# Watch for all message changes
+mmsg -w
+
+# Get all message without watch
+mmsg -g
+
+# Watch focused client appid and title
+mmsg -w -c
+
+# Get all available outputs
+mmsg -O
+
+# Get all tags message
+mmsg -g -t
+
+# Get current focused client message
 mmsg -g -c
 
-# Watch for focus changes (useful for bars)
-mmsg -w -c
+# Get current keyboard layout
+mmsg -g -k
+
+# Get current keybind mode
+mmsg -g -b
 ```
+
+#### Tag Message Format
+
+- State: 0 → none, 1 → active, 2 → urgent
+
+Example output:
+| Monitor | Tag Number | Tag State | Clients in Tag | Focused Client |
+|---------|------------|-----------|----------------|----------------|
+| eDP-1   | tag 2      | 0         | 1              | 0              |
+
+| Monitor | occupied tags mask | active tags mask | urgent tags mask |
+|---------|--------------------|------------------|------------------|
+| eDP-1   | 14                 | 6                | 0                |
 
 ## Virtual Monitors
 

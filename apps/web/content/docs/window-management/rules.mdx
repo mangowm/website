@@ -14,30 +14,78 @@ Window rules allow you to set specific properties (floating, opacity, size) for 
 windowrule=Parameter:Value,Parameter:Value,appid:Regex,title:Regex
 ```
 
-### Common Parameters
+### State Parameters
+
+| Parameter | Values | Description |
+| :--- | :--- | :--- |
+| `isfloating` | `0` / `1` | Force the window to float. |
+| `isfullscreen` | `0` / `1` | Open in fullscreen mode. |
+| `isglobal` | `0` / `1` | Pin window to all tags (sticky). |
+| `isoverlay` | `0` / `1` | Render window on top of everything (overlay layer). |
+| `isopensilent` | `0` / `1` | Open window without stealing focus. |
+| `istagsilent` | `0` / `1` | Don't focus if the window opens on a hidden tag. |
+| `force_maximize` | `0` / `1` | Force the window to start maximized. |
+| `force_tile_state`| `0` / `1` | Force the window to tile, even if it requests floating. |
+| `noopenmaximized` | `0` / `1` | Prevent the window from opening in maximized mode. |
+
+### Geometry & Position
+
+| Parameter | Example | Description |
+| :--- | :--- | :--- |
+| `width` | `800` | Set width for floating windows. |
+| `height` | `600` | Set height for floating windows. |
+| `offsetx` | `10` | Horizontal offset from center (percentage -100 to 100). |
+| `offsety` | `-10` | Vertical offset from center. |
+| `monitor` | `eDP-1` | Send to a specific monitor. |
+| `tags` | `1` | Send to a specific tag ID. |
+| `no_force_center` | `1` | Disable auto-centering for floating windows. |
+
+### Visuals & Decoration
+
+| Parameter | Values | Description |
+| :--- | :--- | :--- |
+| `noblur` | `0` / `1` | Disable blur for this window. |
+| `isnoborder` | `0` / `1` | Remove window borders. |
+| `isnoshadow` | `0` / `1` | Disable window shadows. |
+| `isnoanimation` | `0` / `1` | Disable animations for this window. |
+| `focused_opacity` | `0.0`-`1.0`| Override focused opacity. |
+| `unfocused_opacity`| `0.0`-`1.0`| Override unfocused opacity. |
+
+### Advanced
 
 | Parameter | Description |
 | :--- | :--- |
-| `isfloating` | `1` to force floating state. |
-| `isfullscreen` | `1` to open in fullscreen. |
-| `width`/`height` | Set size for floating windows (e.g., `width:800`). |
-| `isopensilent` | Open window without stealing focus. |
-| `tags` | Send to specific tag (e.g., `tags:2`). |
-| `monitor` | Send to specific monitor name. |
-| `noblur` | Disable blur for this window. |
-| `force_tearing` | Allow screen tearing (good for games). |
+| `globalkeybinding` | Bind a global hotkey (Wayland apps only). Format: `mod+key`. |
+| `isterm` | `1` marks the window as a terminal (useful for swallowing). |
+| `noswallow` | `1` prevents this window from being swallowed. |
+| `force_tearing` | `1` forces tearing (VSync off) for games. |
+| `isnamedscratchpad`| `1` marks this window as a named scratchpad target. |
+| `scroller_proportion` | Set scroller proportion (0.1-1.0). |
+| `animation_type_open` | Set open animation (`zoom`, `slide`, `fade`, `none`). |
+| `animation_type_close` | Set close animation (`zoom`, `slide`, `fade`, `none`). |
+| `isnosizehint` | `1` disables size hints from client. |
+| `isunglobal` | `1` makes it an unmanaged global window. |
+| `nofadein` | `1` ignores fade-in animation. |
+| `allow_csd` | `1` allows client-side decoration. |
+| `allow_shortcuts_inhibit` | `1` allows shortcuts to be inhibited by clients.
 
 ### Examples
 
 ```ini
-# Float a music player and set size
+# Center a music player and set size
 windowrule=width:1000,height:900,isfloating:1,appid:yesplaymusic
 
-# Open OBS silently without focus
-windowrule=isopensilent:1,appid:com.obsproject.Studio
+# Set a global toggle key for OBS
+windowrule=globalkeybinding:ctrl+alt-o,appid:com.obsproject.Studio
 
-# Pin a window to tag 9
+# Open Discord on tag 9
 windowrule=tags:9,appid:discord
+
+# Force CS2 to allow tearing
+windowrule=force_tearing:1,title:Counter-Strike 2
+
+# Create a named scratchpad for file manager
+windowrule=isnamedscratchpad:1,width:1280,height:800,appid:st-yazi
 ```
 
 ## Tag Rules
@@ -50,16 +98,38 @@ Configure default layouts and behaviors for specific tags.
 tagrule=id:Number,Parameter:Value
 ```
 
-| Parameter | Description |
-| :--- | :--- |
-| `id` | The tag number (1-9). |
-| `layout_name` | Default layout (e.g., `tile`, `scroller`). |
-| `monitor_name` | Bind tag to a specific monitor. |
-| `no_hide` | Keep tag visible even if empty. |
+| Parameter | Type | Values | Description |
+|-----------|------|--------|-------------|
+| `id` | integer | 0-9 | Match by tags id, 0 means ~0 tag |
+| `monitor_name` | string | monitor name | Match by monitor name |
+| `layout_name` | string | layout name | Layout name to set |
+| `no_render_border` | integer | 0 or 1 | Disable render border |
+| `no_hide` | integer | 0,1 | Not hide even if the tag is empty (persistent tag) |
 
-**Example:**
+### Supported Layout Names
+- `tile`
+- `scroller`
+- `monocle`
+- `grid`
+- `deck`
+- `center_tile`
+- `right_tile`
+- `vertical_tile`
+- `vertical_scroller`
+- `vertical_grid`
+- `vertical_spiral`
+- `vertical_deck`
+
+### Examples
 
 ```ini
+# Persistent tags (1-4)
+tagrule=id:1,no_hide:1
+tagrule=id:2,no_hide:1
+tagrule=id:3,monitor_name:eDP-1,no_hide:1
+tagrule=id:4,monitor_name:eDP-1,no_hide:1
+
+# Layout assignments
 tagrule=id:1,layout_name:tile
 tagrule=id:2,layout_name:scroller
 tagrule=id:9,monitor_name:HDMI-A-1,layout_name:monocle
@@ -75,13 +145,16 @@ Target "layer shell" surfaces like status bars (`waybar`), launchers (`rofi`), o
 layerrule=layer_name:Regex,Parameter:Value
 ```
 
-| Parameter | Description |
-| :--- | :--- |
-| `noblur` | Disable background blur. |
-| `noanim` | Disable animations. |
-| `animation_type_open` | Set specific opening animation (`slide`, `zoom`, `fade`). |
+| Parameter | Type | Values | Description |
+|-----------|------|--------|-------------|
+| `layer_name` | string | layer_name | Match name of layer, support regex |
+| `animation_type_open` | string | slide, zoom, fade, none | Set open animation |
+| `animation_type_close` | string | slide, zoom, fade, none | Set close animation |
+| `noblur` | integer | 0 or 1 | Disable blur |
+| `noanim` | integer | 0 or 1 | Disable layer animation |
+| `noshadow` | integer | 0 or 1 | Disable layer shadow |
 
-**Example:**
+**Examples:**
 
 ```ini
 # Zoom animation for Rofi
@@ -89,4 +162,7 @@ layerrule=animation_type_open:zoom,layer_name:rofi
 
 # Disable blur for screenshot selection tool
 layerrule=noblur:1,layer_name:selection
+
+# Disable animations for notification daemon
+layerrule=noanim:1,layer_name:swaync
 ```
