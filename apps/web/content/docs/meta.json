@@ -4,13 +4,13 @@
 		"index",
 		"installation",
 		"quick-start",
-		"---Core---",
+		"---User Guide---",
 		"configuration",
-		"appearance",
+		"visuals",
 		"window-management",
 		"bindings",
-		"---Advanced---",
-		"advanced",
+		"---Developer---",
+		"scripting",
 		"faq"
 	]
 }

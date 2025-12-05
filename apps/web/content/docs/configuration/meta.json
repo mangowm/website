@@ -1,4 +1,4 @@
 {
 	"title": "Configuration",
-	"pages": ["basics", "input", "monitors"]
+	"pages": ["basics", "monitors", "input", "environment"]
 }
