@@ -1,0 +1,85 @@
+---
+title: IPC & Scripting
+description: Control MangoWC programmatically using mmsg.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## Introduction
+
+MangoWC includes a powerful IPC (Inter-Process Communication) tool called `mmsg`. This allows you to query the window manager's state, watch for events, and execute commands from external scripts.
+
+## Basic Usage
+
+The general syntax for `mmsg` is:
+
+```bash
+mmsg [options] [arguments]
+```
+
+### Common Flags
+
+| Flag | Description |
+| :--- | :--- |
+| `-g` | **Get** values (tags, layout, focused client). |
+| `-s` | **Set** values (switch tags, layouts). |
+| `-w` | **Watch** mode (continuously print events). |
+| `-d` | **Dispatch** a command (execute internal functions). |
+| `-O` | Get output (monitor) information. |
+
+## Examples
+
+### Controlling Windows & Tags
+
+```bash
+# Switch to Tag 1
+mmsg -t 1
+
+# Toggle current window to Tag 2
+mmsg -s -t 2^
+
+# Move window to Tag 3
+mmsg -s -t 3+
+```
+
+### Executing Commands (Dispatch)
+
+You can run any internal dispatcher (like those bound to keys) via the `-d` flag.
+
+```bash
+# Close the focused window
+mmsg -d killclient
+
+# Resize window by +10 width
+mmsg -d resizewin,+10,0
+
+# Toggle fullscreen
+mmsg -d togglefullscreen
+```
+
+### Scripting & Monitoring
+
+Use `-g` or `-w` to build custom status bars or automation scripts.
+
+```bash
+# Get JSON-like info about the focused client
+mmsg -g -c
+
+# Watch for focus changes (useful for bars)
+mmsg -w -c
+```
+
+## Virtual Monitors
+
+You can create headless outputs for screen mirroring or remote desktop access (e.g., Sunshine/Moonlight).
+
+```bash
+# Create a virtual output
+mmsg -d create_virtual_output
+
+# Configure it (set resolution)
+wlr-randr --output HEADLESS-1 --pos 1920,0 --mode 1920x1080@60Hz
+
+# Destroy all virtual outputs
+mmsg -d destroy_all_virtual_output
+```

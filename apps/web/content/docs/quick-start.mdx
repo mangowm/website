@@ -1,0 +1,109 @@
+---
+title: Quick Start
+description: Basic configuration and first steps with MangoWC.
+---
+
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Card, Cards } from 'fumadocs-ui/components/card';
+import { Shell } from 'lucide-react';
+
+Now that you have MangoWC installed, let's get your environment set up.
+
+## Initial Setup
+
+<Steps>
+  <Step>
+    **Create Configuration Directory**
+    
+    MangoWC looks for configuration files in `~/.config/mango/`.
+    
+    ```bash
+    mkdir -p ~/.config/mango
+    ```
+  </Step>
+  <Step>
+    **Copy Default Config**
+    
+    A default configuration file is provided at `/etc/mango/config.conf`. Copy it to your local directory to start customizing.
+    
+    ```bash
+    cp /etc/mango/config.conf ~/.config/mango/config.conf
+    ```
+  </Step>
+  <Step>
+    **Launch MangoWC**
+    
+    You can now start the compositor from your TTY.
+    
+    ```bash
+    mango
+    ```
+    
+    *Optional: To specify a custom config file path:*
+    ```bash
+    mango -c /path/to/your/config.conf
+    ```
+  </Step>
+</Steps>
+
+## Essential Keybindings
+
+MangoWC uses the `Super` (Windows) key as the primary modifier by default.
+
+| Key Combination | Action |
+| :--- | :--- |
+| `Alt` + `Return` | Open Terminal (defaults to `foot`) |
+| `Alt` + `Space` | Open Launcher (defaults to `rofi`) |
+| `Alt` + `Q` | Close (Kill) the active window |
+| `Super` + `M` | Quit MangoWC |
+| `Super` + `F` | Toggle Fullscreen |
+| `Alt` + `Arrow Keys` | Move focus (Left, Right, Up, Down) |
+| `Super` + `1-9` | Switch to Tag 1-9 |
+| `Alt` + `1-9` | Move window to Tag 1-9 |
+
+<Callout type="warn">
+  Some default bindings rely on specific tools like `foot` (terminal) and `rofi` (launcher). Ensure you have them installed or update your `config.conf` to use your preferred alternatives.
+</Callout>
+
+## Recommended Tools
+
+To get a fully functional desktop experience, we recommend installing the following components:
+
+| Category | Recommended Tools |
+|----------|-------------------|
+| Application Launcher | rofi, bemenu, wmenu, fuzzel |
+| Terminal Emulator | foot, wezterm, alacritty, kitty, ghostty |
+| Status Bar | waybar (preferred), eww, quickshell, ags |
+| Desktop Shell | Noctalia, DankMaterialShell |
+| Wallpaper Setup | swww, swaybg |
+| Notification Daemon | swaync, dunst, mako |
+| Desktop Portal | xdg-desktop-portal, xdg-desktop-portal-wlr, xdg-desktop-portal-gtk |
+| Clipboard | wl-clipboard, wl-clip-persist, cliphist |
+| Gamma Control/Night Light | wlsunset, gammastep |
+| Miscellaneous | xfce-polkit, wlogout |
+
+### Desktop Shells
+
+For a complete desktop experience, consider these all-in-one shells built with Quickshell:
+
+<Cards>
+  <Card
+    href="https://docs.noctalia.dev/"
+    title="Noctalia"
+    description="A sleek, minimal, and thoughtfully crafted desktop shell for Wayland."
+  />
+  <Card
+    href="https://danklinux.com/"
+    title="DankMaterialShell"
+    description="A modern and beautiful desktop shell with dynamic theming and smooth animations."
+  />
+</Cards>
+
+## Next Steps
+
+Now that you are up and running, dive deeper into customizing MangoWC:
+
+* [Configure Monitors](/docs/configuration/monitors) - Set up resolution, scaling, and multi-monitor layouts.
+* [Window Rules](/docs/window-management/rules) - Define how specific applications should behave.
+* [Appearance](/docs/appearance/theming) - Customize colors, borders, gaps, and effects.

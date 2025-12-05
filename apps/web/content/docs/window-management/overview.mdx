@@ -1,0 +1,33 @@
+---
+title: Overview
+description: Configure the Expose-like overview mode.
+---
+
+## Overview Settings
+
+Overview mode displays all windows on the current tag for easy selection.
+
+| Setting | Default | Description |
+| :--- | :--- | :--- |
+| `enable_hotarea` | `1` | Enable hot corner activation. |
+| `hotarea_size` | `10` | Size of the hot corner (pixels). |
+| `ov_tab_mode` | `0` | `1` makes overview act like Alt-Tab (release key to select). |
+| `overviewgappi` | `5` | Inner gaps in overview. |
+| `overviewgappo` | `30` | Outer gaps in overview. |
+
+
+
+## Usage
+
+### Activation
+By default, moving the cursor to the bottom-left corner triggers the overview if `enable_hotarea` is on. You can also bind a key:
+
+```ini
+bind=ALT,Tab,toggleoverview
+```
+
+### Controls inside Overview
+
+  - **Left Click**: Focus the selected window.
+  - **Right Click**: Close the window.
+   - **Mod key release**: If `ov_tab_mode` is 1, releasing the mod key selects the highlighted window.

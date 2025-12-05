@@ -1,0 +1,66 @@
+---
+title: Waybar Integration
+description: Configure the Waybar status bar for MangoWC.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## Module Configuration
+
+MangoWC is compatible with Waybar's `ext/workspaces` module (Wayland standard) or the `dwl/tags` module. We recommend `ext/workspaces` for the best experience.
+
+### `config.jsonc`
+
+Add the following to your Waybar configuration:
+
+```jsonc
+{
+  "modules-left": [
+    "ext/workspaces",
+    "dwl/window"
+  ],
+  "ext/workspaces": {
+    "format": "{icon}",
+    "ignore-hidden": true,
+    "on-click": "activate",
+    "on-click-right": "deactivate",
+    "sort-by-id": true
+  },
+  "dwl/window": {
+    "format": "[{layout}] {title}"
+  }
+}
+```
+
+## Styling
+
+You can style the tags using standard CSS in `style.css`.
+
+### `style.css`
+
+```css
+#workspaces button {
+  padding: 0 5px;
+  color: #ddca9e;
+  background: transparent;
+  border-bottom: 2px solid transparent;
+}
+
+/* Active tag (viewed) */
+#workspaces button.active {
+  color: #282828;
+  background-color: #ddca9e;
+  border-radius: 4px;
+}
+
+/* Tag with windows but not focused */
+#workspaces button.occupied {
+  color: #cdc885;
+}
+
+/* Tag requesting attention */
+#workspaces button.urgent {
+  background-color: #ef5e5e;
+  color: #282828;
+}
+```

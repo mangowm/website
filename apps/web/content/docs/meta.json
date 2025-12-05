@@ -1,3 +1,16 @@
 {
-	"pages": ["index", "installation", "configuration"]
+	"title": "MangoWC",
+	"pages": [
+		"index",
+		"installation",
+		"quick-start",
+		"---Core---",
+		"configuration",
+		"appearance",
+		"window-management",
+		"bindings",
+		"---Advanced---",
+		"advanced",
+		"faq"
+	]
 }

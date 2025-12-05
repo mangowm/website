@@ -1,0 +1,61 @@
+---
+title: Key Bindings
+description: Define keyboard shortcuts and modes.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## Syntax
+
+Key bindings follow this format:
+
+```ini
+bind[flags]=MODIFIERS,KEY,COMMAND,PARAMETERS
+```
+
+  - **Modifiers**: `SUPER`, `CTRL`, `ALT`, `SHIFT`, `NONE` (combine with `+`).
+  - **Key**: Key name (from `xev` or `wev`) or code (e.g., `code:24` for `q`).
+
+### Flags
+
+  - `l`: Works even when screen is locked.
+  - `s`: Uses keysym instead of keycode.
+  - `r`: Triggers on key release instead of press.
+
+**Examples:**
+
+```ini
+bind=SUPER,Q,killclient
+bindl=SUPER,L,spawn,swaylock
+```
+
+## Key Modes (Submaps)
+
+You can create modal keybindings (like `resize` mode in Sway).
+
+```ini
+# Enter 'resize' mode
+bind=ALT,R,setkeymode,resize
+
+keymode=resize
+bind=NONE,Left,resizewin,-10,0
+bind=NONE,Escape,setkeymode,default
+```
+
+## Dispatchers List
+
+Here are common commands you can bind:
+
+| Command | Description | Example Param |
+| :--- | :--- | :--- |
+| `spawn` | Run a command | `foot` |
+| `spawn_shell` | Run command in shell | `echo hi \| dmenu` |
+| `killclient` | Close window | - |
+| `focusdir` | Move focus | `left`, `right`, `up`, `down` |
+| `togglefloating` | Float window | - |
+| `fullscreen` | Fullscreen | - |
+| `view` | Switch tag | `1` |
+| `tag` | Move window to tag | `1` |
+| `focusmon` | Focus monitor | `left` / `monitor-name` |
+| `reload_config` | Reload settings | - |
+| `quit` | Exit MangoWC | - |

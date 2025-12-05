@@ -1,0 +1,92 @@
+---
+title: Rules
+description: Define behavior for specific windows, tags, and layers.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## Window Rules
+
+Window rules allow you to set specific properties (floating, opacity, size) for applications based on their `appid` or `title`.
+
+**Format:**
+```ini
+windowrule=Parameter:Value,Parameter:Value,appid:Regex,title:Regex
+```
+
+### Common Parameters
+
+| Parameter | Description |
+| :--- | :--- |
+| `isfloating` | `1` to force floating state. |
+| `isfullscreen` | `1` to open in fullscreen. |
+| `width`/`height` | Set size for floating windows (e.g., `width:800`). |
+| `isopensilent` | Open window without stealing focus. |
+| `tags` | Send to specific tag (e.g., `tags:2`). |
+| `monitor` | Send to specific monitor name. |
+| `noblur` | Disable blur for this window. |
+| `force_tearing` | Allow screen tearing (good for games). |
+
+### Examples
+
+```ini
+# Float a music player and set size
+windowrule=width:1000,height:900,isfloating:1,appid:yesplaymusic
+
+# Open OBS silently without focus
+windowrule=isopensilent:1,appid:com.obsproject.Studio
+
+# Pin a window to tag 9
+windowrule=tags:9,appid:discord
+```
+
+## Tag Rules
+
+Configure default layouts and behaviors for specific tags.
+
+**Format:**
+
+```ini
+tagrule=id:Number,Parameter:Value
+```
+
+| Parameter | Description |
+| :--- | :--- |
+| `id` | The tag number (1-9). |
+| `layout_name` | Default layout (e.g., `tile`, `scroller`). |
+| `monitor_name` | Bind tag to a specific monitor. |
+| `no_hide` | Keep tag visible even if empty. |
+
+**Example:**
+
+```ini
+tagrule=id:1,layout_name:tile
+tagrule=id:2,layout_name:scroller
+tagrule=id:9,monitor_name:HDMI-A-1,layout_name:monocle
+```
+
+## Layer Rules
+
+Target "layer shell" surfaces like status bars (`waybar`), launchers (`rofi`), or notification daemons.
+
+**Format:**
+
+```ini
+layerrule=layer_name:Regex,Parameter:Value
+```
+
+| Parameter | Description |
+| :--- | :--- |
+| `noblur` | Disable background blur. |
+| `noanim` | Disable animations. |
+| `animation_type_open` | Set specific opening animation (`slide`, `zoom`, `fade`). |
+
+**Example:**
+
+```ini
+# Zoom animation for Rofi
+layerrule=animation_type_open:zoom,layer_name:rofi
+
+# Disable blur for screenshot selection tool
+layerrule=noblur:1,layer_name:selection
+```

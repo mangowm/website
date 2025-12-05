@@ -1,0 +1,63 @@
+---
+title: Mouse & Gestures
+description: Configure mouse buttons, scrolling, gestures, and lid switches.
+---
+
+## Mouse Bindings
+
+Bind actions to mouse clicks.
+
+**Format:**
+```ini
+mousebind=MODIFIERS,BUTTON,COMMAND,PARAMS
+```
+
+  - **Buttons**: `btn_left`, `btn_right`, `btn_middle`, `btn_side`, `btn_extra`.
+
+**Example:**
+
+```ini
+# Move window with Super + Left Click
+mousebind=SUPER,btn_left,moveresize,curmove
+
+# Resize window with Super + Right Click
+mousebind=SUPER,btn_right,moveresize,curresize
+```
+
+## Axis Bindings (Scroll)
+
+Trigger actions by scrolling the mouse wheel.
+
+**Format:** `axisbind=MODIFIERS,DIRECTION,COMMAND`
+
+```ini
+# Switch tags by scrolling while holding Super
+axisbind=SUPER,UP,viewtoleft_have_client
+axisbind=SUPER,DOWN,viewtoright_have_client
+```
+
+## Touchpad Gestures
+
+Bind multi-finger swipes on the touchpad.
+
+**Format:** `gesturebind=MODIFIERS,DIRECTION,FINGERS,COMMAND`
+
+```ini
+# 3-finger swipe to move focus
+gesturebind=none,left,3,focusdir,left
+gesturebind=none,right,3,focusdir,right
+
+# 4-finger swipe to switch workspace
+gesturebind=none,up,4,toggleoverview
+```
+
+## Switch Bindings (Lid)
+
+Trigger actions when the laptop lid is opened or closed.
+
+**Prerequisite:** Ensure `HandleLidSwitch=ignore` is set in `/etc/systemd/logind.conf`.
+
+```ini
+switchbind=fold,spawn,swaylock
+switchbind=unfold,spawn,wlr-dpms on
+```

@@ -3,7 +3,28 @@ import { defineConfig, defineDocs } from "fumadocs-mdx/config";
 var docs = defineDocs({
   dir: "content/docs"
 });
-var source_config_default = defineConfig();
+var source_config_default = defineConfig({
+  mdxOptions: {
+    rehypeCodeOptions: {
+      langs: [
+        "ts",
+        "js",
+        "html",
+        "tsx",
+        "mdx",
+        "ini",
+        "bash",
+        "nix",
+        "jsonc",
+        "css"
+      ],
+      themes: {
+        light: "catppuccin-latte",
+        dark: "catppuccin-mocha"
+      }
+    }
+  }
+});
 export {
   source_config_default as default,
   docs

@@ -1,0 +1,59 @@
+---
+title: Animations
+description: Configure smooth transitions for windows and layers.
+---
+
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
+
+## Enabling Animations
+
+MangoWC supports animations for both standard windows and layer shell surfaces (like bars and notifications).
+
+```ini
+animations=1
+layer_animations=1
+```
+
+## Animation Types
+
+You can define different animation styles for opening and closing windows.
+
+**Available Types:** `slide`, `zoom`, `fade`, `none`.
+
+```ini
+animation_type_open=slide
+animation_type_close=slide
+layer_animation_type_open=slide
+layer_animation_type_close=slide
+```
+
+## Durations
+
+Control the speed of animations (in milliseconds).
+
+| Action | Setting | Default |
+| :--- | :--- | :--- |
+| Window Move | `animation_duration_move` | `500` |
+| Window Open | `animation_duration_open` | `400` |
+| Window Close | `animation_duration_close` | `800` |
+| Tag Switch | `animation_duration_tag` | `350` |
+| Focus Change | `animation_duration_focus` | `0` |
+
+## Custom Bezier Curves
+
+Bezier curves determine the "feel" of the animation (e.g., linear vs. bouncy).
+
+The format is `x1,y1,x2,y2`.
+
+```ini
+# Example: Smooth ease-out
+animation_curve_open=0.46,1.0,0.29,1
+animation_curve_move=0.46,1.0,0.29,1
+animation_curve_tag=0.46,1.0,0.29,1
+```
+
+<Accordions>
+<Accordion title="How to find curve values">
+You can visualize and generate these values using online tools like [cssportal.com](https://www.cssportal.com/css-cubic-bezier-generator/) or [easings.net](https://easings.net).
+</Accordion>
+</Accordions>

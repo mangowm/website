@@ -1,0 +1,82 @@
+---
+title: Monitors
+description: Manage display outputs, resolution, scaling, and tearing.
+---
+
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## Monitor Rules
+
+You can configure each display output individually using the `monitorrule` keyword.
+
+**Syntax:**
+```ini
+monitorrule=name,mfact,nmaster,layout,transform,scale,x,y,width,height,refreshrate
+```
+
+### Parameters
+
+| Parameter | Description |
+| :--- | :--- |
+| `name` | The output name (e.g., `eDP-1`, `HDMI-A-1`). Use `wlr-randr` to find these. |
+| `mfact` | Master area factor (e.g., `0.55`). |
+| `nmaster` | Number of master windows. |
+| `layout` | Default layout for this monitor (e.g., `tile`, `scroller`). |
+| `transform` | Screen rotation/flip (see table below). |
+| `scale` | UI Scale factor (e.g., `1`, `1.5`). |
+| `x,y` | Position coordinates. |
+| `width,height` | Resolution width and height. |
+| `refreshrate` | Refresh rate in Hz. |
+
+### Transform Values
+
+| Value | Rotation |
+| :--- | :--- |
+| `0` | Normal |
+| `1` | 90° |
+| `2` | 180° |
+| `3` | 270° |
+| `4-7` | Flipped variations |
+
+<Callout type="error" title="Critical: XWayland & Coordinates">
+If you use XWayland applications, **never use negative coordinates** for your monitor positions. This is a known XWayland bug that causes click events to malfunction. Always arrange your monitors starting from `0,0` and extending into positive coordinates.
+</Callout>
+
+### Examples
+
+```ini
+# Laptop display: 1080p, 60Hz, no rotation
+monitorrule=eDP-1,0.55,1,tile,0,1,0,0,1920,1080,60
+
+# External monitor: 1440p, 144Hz, positioned to the right
+monitorrule=HDMI-A-1,0.55,1,tile,0,1,1920,0,2560,1440,144
+```
+
+## Tearing (Game Mode)
+
+Tearing allows games to bypass the compositor's VSync for lower latency.
+
+1.  **Enable Globally:**
+    ```ini
+    allow_tearing=1
+    ```
+2.  **Enable per Window:**
+    Use a window rule to force tearing for specific games.
+    ```ini
+    windowrule=force_tearing:1,title:Counter-Strike 2
+    ```
+
+## Power Management
+
+You can control monitor power using the `mmsg` IPC tool.
+
+```bash
+# Turn off
+mmsg -d disable_monitor,eDP-1
+
+# Turn on
+mmsg -d enable_monitor,eDP-1
+
+# Toggle
+mmsg -d toggle_monitor,eDP-1
+```
