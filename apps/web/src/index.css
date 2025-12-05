@@ -211,8 +211,8 @@
 
 	.grid-bg {
 		background-image:
-			linear-gradient(to right, oklch(0 0 0 / 0.1) 1px, transparent 1px),
-			linear-gradient(to bottom, oklch(0 0 0 / 0.1) 1px, transparent 1px);
+			linear-gradient(to right, oklch(0 0 0 / 0.08) 1px, transparent 1px),
+			linear-gradient(to bottom, oklch(0 0 0 / 0.08) 1px, transparent 1px);
 	}
 
 	.dark .grid-bg {

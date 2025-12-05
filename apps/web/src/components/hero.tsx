@@ -7,13 +7,12 @@ export function Hero() {
 	return (
 		<section className="relative flex items-center justify-center overflow-hidden px-4 py-20 sm:px-6 lg:px-10 min-h-[85vh]">
 			{/* Background grid */}
-			<div className="grid-bg pointer-events-none absolute inset-0 bg-[size:4rem_4rem]" />
+			<div className="grid-bg pointer-events-none absolute inset-0 bg-[size:3rem_3rem]" />
 
-			{/* Gradient fade */}
-			<div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-background via-transparent to-background" />
+			{/* Subtle gradient fade */}
+			<div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background/90" />
 
 			<div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col items-center gap-14 lg:flex-row lg:items-center lg:gap-20">
-				
 				{/* Left Column */}
 				<div className="flex-1 text-center lg:text-left">
 					<div className="mb-5 inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1">
@@ -27,18 +26,20 @@ export function Hero() {
 					</h1>
 
 					<p className="mx-auto mb-10 max-w-xl text-base text-muted-foreground sm:text-lg md:text-xl lg:mx-0 text-balance">
-						MangoWC is a modern, lightweight, high-performance Wayland compositor 
-						built on dwl — crafted for speed, flexibility, and a customizable desktop
-						experience.
+						MangoWC is a modern, lightweight, high-performance Wayland
+						compositor built on dwl — crafted for speed, flexibility, and a
+						customizable desktop experience.
 					</p>
 
 					{/* PERFECT button layout */}
-					<div className="
+					<div
+						className="
 						flex flex-col gap-4
 						items-center
 						sm:flex-row sm:justify-center
 						lg:justify-start
-					">
+					"
+					>
 						<Link
 							href="https://github.com/DreamMaoMao/mangowc"
 							target="_blank"
