@@ -4,13 +4,11 @@
 		"index",
 		"installation",
 		"quick-start",
-		"---User Guide---",
 		"configuration",
 		"visuals",
 		"window-management",
 		"bindings",
-		"---Developer---",
-		"scripting",
+		"ipc",
 		"faq"
 	]
 }
