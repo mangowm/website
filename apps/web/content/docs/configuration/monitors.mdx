@@ -80,3 +80,37 @@ mmsg -d enable_monitor,eDP-1
 # Toggle
 mmsg -d toggle_monitor,eDP-1
 ```
+
+## Screen Scale
+
+### Not Using Global Scale (Recommended)
+- If you do not use XWayland apps, you can just use monitor rules or wlr-randr to set a global monitor scale.
+
+- If you are using some XWayland apps, I don't suggest you to set monitor scale.
+
+You can set scale like this, such as 1.4 factor.
+
+Dependencies:
+```bash
+yay -S xorg-xrdb
+```
+
+In config file:
+```ini
+env=QT_AUTO_SCREEN_SCALE_FACTOR,1
+env=QT_WAYLAND_FORCE_DPI,140
+```
+
+In autostart:
+```bash
+echo "Xft.dpi: 140" | xrdb -merge
+gsettings set org.gnome.desktop.interface text-scaling-factor 1.4
+```
+
+Edit autostart:
+```bash
+# start xwayland
+/usr/sbin/xwayland-satellite :11 &
+# scale 1.4 for xwayland
+sleep 0.5s && echo "Xft.dpi: 140" | xrdb -merge
+```

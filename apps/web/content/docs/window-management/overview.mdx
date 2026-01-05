@@ -1,33 +1,27 @@
 ---
 title: Overview
-description: Configure the Expose-like overview mode.
+description: Configure the overview mode for window navigation.
 ---
 
 ## Overview Settings
 
-Overview mode displays all windows on the current tag for easy selection.
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `hotarea_size` | integer | 10 | Hot area size in pixels |
+| `enable_hotarea` | integer | 1 | Enable hot areas (0-disable, 1-enable) |
+| `ov_tab_mode` | integer | 0 | Overview tab mode (0-disable, 1-enable) |
+| `overviewgappi` | integer | 5 | Inner gap in overview mode |
+| `overviewgappo` | integer | 30 | Outer gap in overview mode |
 
-| Setting | Default | Description |
-| :--- | :--- | :--- |
-| `enable_hotarea` | `1` | Enable hot corner activation. |
-| `hotarea_size` | `10` | Size of the hot corner (pixels). |
-| `ov_tab_mode` | `0` | `1` makes overview act like Alt-Tab (release key to select). |
-| `overviewgappi` | `5` | Inner gaps in overview. |
-| `overviewgappo` | `30` | Outer gaps in overview. |
+### A More Detailed Explanation
+`enable_hotarea`: When your cursor enters the bottom left corner of the monitor, it will toggle the overview mode.
+`hotarea_size`: The size of the hotarea, 10x10 default.
+`ov_tab_mode`: The overview will circle switch focus when you toggle overview and will leave ov mode when you release your mod key.
 
-
-
-## Usage
-
-### Activation
-By default, moving the cursor to the bottom-left corner triggers the overview if `enable_hotarea` is on. You can also bind a key:
+### Notice
+When you are in overview mode, you can use the right mouse button to close a window, and the left mouse button to jump to a window (by the following config):
 
 ```ini
-bind=ALT,Tab,toggleoverview
+mousebind=NONE,btn_left,toggleoverview,1
+mousebind=NONE,btn_right,killclient,0
 ```
-
-### Controls inside Overview
-
-  - **Left Click**: Focus the selected window.
-  - **Right Click**: Close the window.
-  - **Mod key release**: If `ov_tab_mode` is 1, releasing the mod key selects the highlighted window.
