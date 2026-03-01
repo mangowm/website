@@ -38,7 +38,7 @@ export function createMetadata(override: Metadata): Metadata {
 		openGraph: {
 			title: override.title ?? undefined,
 			description: override.description ?? undefined,
-			url: "https://mangowc.vercel.app",
+			url: "https://mangowm.github.io",
 			images: `/banner.webp?v=${IMAGE_VERSION}`,
 			siteName: "MangoWC",
 			locale: "en_US",
@@ -57,7 +57,7 @@ export function createMetadata(override: Metadata): Metadata {
 				"application/rss+xml": [
 					{
 						title: "MangoWC Updates",
-						url: "https://mangowc.vercel.app/rss.xml",
+						url: "https://mangowm.github.io/rss.xml",
 					},
 				],
 			},
@@ -81,6 +81,4 @@ export const SITE_DESCRIPTION =
 export const baseUrl =
 	process.env.NODE_ENV === "development"
 		? new URL("http://localhost:3001")
-		: new URL("https://mangowm.github.io" + basePath);
-
-export const githubPagesBasePath = "";
+		: new URL("https://mangowm.github.io");

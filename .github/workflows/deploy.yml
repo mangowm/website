@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
       - run: cd apps/web && bun install
-      - run: cd apps/web && GITHUB_PAGES=true bun run build
+      - run: cd apps/web && bun run build
       - uses: actions/upload-pages-artifact@v3
         with:
           path: apps/web/out

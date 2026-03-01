@@ -1,4 +1,3 @@
-import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../index.css";
@@ -89,7 +88,6 @@ export default function RootLayout({
 				<AppProviders>
 					<Providers>{children}</Providers>
 				</AppProviders>
-				<Analytics />
 				<script
 					type="application/ld+json"
 					dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSoftware) }}

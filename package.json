@@ -12,8 +12,7 @@
 		"check-types": "turbo check-types"
 	},
 	"dependencies": {
-		"update": "^0.7.4",
-		"vercel": "^50.25.4"
+		"update": "^0.7.4"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.4",
