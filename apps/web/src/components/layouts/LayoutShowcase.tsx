@@ -61,6 +61,7 @@ interface LayoutParams {
   windowCount: number;
   masterCount: number;
   masterFactor: number;
+  focusedWindow: number;
   enableGaps: boolean;
   smartGaps: boolean;
   gapOuterH: number;
@@ -177,7 +178,7 @@ export function LayoutShowcase() {
     width: 1920, height: 1080, scale: 1, isPortrait: false,
   });
   const [params, setParams] = useState<LayoutParams>({
-    windowCount: 4, masterCount: 1, masterFactor: 0.5,
+    windowCount: 4, masterCount: 1, masterFactor: 0.5, focusedWindow: 3,
     enableGaps: true, smartGaps: false,
     gapOuterH: 10, gapOuterV: 10, gapInnerH: 5, gapInnerV: 5,
     centerMasterOverspread: false, centerWhenSingleStack: true,
@@ -264,7 +265,7 @@ export function LayoutShowcase() {
 
         <ConfigSection title="General">
           <RangeSlider label="Windows" value={params.windowCount} min={1} max={12}
-            onChange={(v) => { updateParams({ windowCount: v }); if (params.masterCount > v) updateParams({ masterCount: v }); }} />
+            onChange={(v) => { updateParams({ windowCount: v, focusedWindow: v - 1 }); if (params.masterCount > v) updateParams({ masterCount: v }); }} />
           <Toggle label="Enable Gaps" checked={params.enableGaps} onChange={(v) => updateParams({ enableGaps: v })} />
           <Toggle label="Smart Gaps" checked={params.smartGaps} onChange={(v) => updateParams({ smartGaps: v })} />
         </ConfigSection>
@@ -327,7 +328,7 @@ export function LayoutShowcase() {
             </div>
           </div>
           {rects.map((rect, index) => (
-            <WindowRect key={index} rect={rect} focused={index < params.masterCount} label={`Window ${index + 1}`} />
+            <WindowRect key={index} rect={rect} focused={index === params.focusedWindow} label={`Window ${index + 1}`} />
           ))}
         </div>
       </div>
