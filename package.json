@@ -1,5 +1,5 @@
 {
-	"name": "mangowc-web",
+	"name": "mango-web",
 	"private": true,
 	"type": "module",
 	"workspaces": [
