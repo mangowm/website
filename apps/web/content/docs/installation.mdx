@@ -8,35 +8,11 @@ import { Step, Steps } from 'fumadocs-ui/components/steps';
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 
-## Prerequisites
+## Package Installation
 
-Regardless of your installation method, mangowm requires a Wayland-capable environment. If you are building from source, ensure you have the following dependencies:
+mangowm is available as a pre-built package on several distributions. Choose your distribution below.
 
-<Callout type="info" title="Build Dependencies">
-- `glibc`
-- `wayland`
-- `wayland-protocols`
-- `libinput`
-- `libdrm`
-- `libxkbcommon`
-- `pixman`
-- `git`
-- `meson`
-- `ninja`
-- `libdisplay-info`
-- `libliftoff`
-- `hwdata`
-- `seatd`
-- `pcre2`
-- `xorg-xwayland`
-- `libxcb`
-</Callout>
-
-## Install Guide
-
-Choose your distribution below for specific installation instructions.
-
-<Tabs items={['Arch Linux', 'Fedora', 'Gentoo', 'Guix System', 'NixOS', 'PikaOS', 'Manual Build']}>
+<Tabs items={['Arch Linux', 'Fedora', 'Gentoo', 'Guix System', 'NixOS', 'PikaOS']}>
 
 <Tab value="Arch Linux">
   mangowm is available in the **Arch User Repository (AUR)**.
@@ -229,8 +205,34 @@ pikman install mangowc
 ```
 </Tab>
 
-<Tab value="Manual Build">
-If your distribution isn't listed, you can build mangowm from source. You will need to build `wlroots` and `scenefx` manually as well.
+</Tabs>
+
+## Building from Source
+
+If your distribution isn't listed above, or you want the latest unreleased changes, you can build mangowm from source.
+
+<Callout type="info" title="Build Dependencies">
+Ensure the following dependencies are installed before proceeding:
+- `glibc`
+- `wayland`
+- `wayland-protocols`
+- `libinput`
+- `libdrm`
+- `libxkbcommon`
+- `pixman`
+- `git`
+- `meson`
+- `ninja`
+- `libdisplay-info`
+- `libliftoff`
+- `hwdata`
+- `seatd`
+- `pcre2`
+- `xorg-xwayland`
+- `libxcb`
+</Callout>
+
+You will need to build `wlroots` and `scenefx` manually as well.
 
 <Steps>
 <Step>
@@ -264,6 +266,3 @@ sudo ninja -C build install
 ```
 </Step>
 </Steps>
-</Tab>
-
-</Tabs>

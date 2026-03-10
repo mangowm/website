@@ -3,48 +3,42 @@ title: Input Devices
 description: Configure keyboard layouts, mouse sensitivity, and touchpad gestures.
 ---
 
-import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 import { Callout } from 'fumadocs-ui/components/callout';
 
 ## Device Configuration
 
 MangoWC provides granular control over different input devices.
 
-<Tabs items={['Keyboard', 'Trackpad', 'Mouse']}>
+### Keyboard Settings
 
-<Tab value="Keyboard">
-  ### Keyboard Settings
+Control key repeat rates and layout rules.
 
-  Control key repeat rates and layout rules.
+| Setting | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `repeat_rate` | `int` | `25` | How many times a key repeats per second. |
+| `repeat_delay` | `int` | `600` | Delay (ms) before a held key starts repeating. |
+| `numlockon` | `0` or `1` | `0` | Enable NumLock on startup. |
+| `xkb_rules_rules` | `string` | - | XKB rules file (e.g., `evdev`, `base`). Usually auto-detected. |
+| `xkb_rules_model` | `string` | - | Keyboard model (e.g., `pc104`, `macbook`). |
+| `xkb_rules_layout` | `string` | - | Keyboard layout code (e.g., `us`, `de`, `us,de`). |
+| `xkb_rules_variant` | `string` | - | Layout variant (e.g., `dvorak`, `colemak`, `intl`). |
+| `xkb_rules_options` | `string` | - | XKB options (e.g., `caps:escape`, `ctrl:nocaps`). |
 
-  | Setting | Type | Default | Description |
-  | :--- | :--- | :--- | :--- |
-  | `repeat_rate` | `int` | `25` | How many times a key repeats per second. |
-  | `repeat_delay` | `int` | `600` | Delay (ms) before a held key starts repeating. |
-  | `numlockon` | `0` or `1` | `0` | Enable NumLock on startup. |
-  | `xkb_rules_rules` | `string` | - | XKB rules file (e.g., `evdev`, `base`). Usually auto-detected. |
-  | `xkb_rules_model` | `string` | - | Keyboard model (e.g., `pc104`, `macbook`). |
-  | `xkb_rules_layout` | `string` | - | Keyboard layout code (e.g., `us`, `de`, `us,de`). |
-  | `xkb_rules_variant` | `string` | - | Layout variant (e.g., `dvorak`, `colemak`, `intl`). |
-  | `xkb_rules_options` | `string` | - | XKB options (e.g., `caps:escape`, `ctrl:nocaps`). |
+**Example:**
+```ini
+repeat_rate=40
+repeat_delay=300
+numlockon=1
+xkb_rules_layout=us,de
+xkb_rules_variant=dvorak
+xkb_rules_options=caps:escape,ctrl:nocaps
+```
 
-  **Example:**
-  ```ini
-  repeat_rate=40
-  repeat_delay=300
-  numlockon=1
-  xkb_rules_layout=us,de
-  xkb_rules_variant=dvorak
-  xkb_rules_options=caps:escape,ctrl:nocaps
-  ```
-
-</Tab>
-
-<Tab value="Trackpad">
+---
 
 ### Trackpad Settings
 
-Specific settings for laptop touchpads. **Note:** Some settings may require a relogin to take effect.
+Specific settings for laptop touchpads. Some settings may require a relogin to take effect.
 
 | Setting | Default | Description |
 | :--- | :--- | :--- |
@@ -60,9 +54,7 @@ Specific settings for laptop touchpads. **Note:** Some settings may require a re
 | `middle_button_emulation` | `0` | Emulate middle button. |
 | `swipe_min_threshold` | `1` | Minimum swipe threshold. |
 
-</Tab>
-
-<Tab value="Mouse">
+---
 
 ### Mouse Settings
 
@@ -79,20 +71,28 @@ Configuration for external mice.
 | `send_events_mode` | `0` | `0` (Enabled), `1` (Disabled), `2` (Disabled on external mouse). |
 | `button_map` | `0` | `0` (Left/right/middle), `1` (Left/middle/right). |
 
-</Tab>
-
-</Tabs>
+---
 
 ## Input Method Editor (IME)
 
-To use Fcitx5 or IBus, you must set specific environment variables in your config file.
+To use Fcitx5 or IBus, set these environment variables in your config file.
+
+<Callout type="info">
+  These settings require a restart of the window manager to take effect.
+</Callout>
 
 **For Fcitx5:**
-
 ```ini
 env=GTK_IM_MODULE,fcitx
 env=QT_IM_MODULE,fcitx
 env=SDL_IM_MODULE,fcitx
 env=XMODIFIERS,@im=fcitx
 env=GLFW_IM_MODULE,ibus
+```
+
+**For IBus:**
+```ini
+env=GTK_IM_MODULE,ibus
+env=QT_IM_MODULE,ibus
+env=XMODIFIERS,@im=ibus
 ```
