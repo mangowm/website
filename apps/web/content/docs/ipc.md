@@ -1,27 +1,27 @@
 ---
 title: IPC
-description: Control MangoWC programmatically using mmsg.
+description: Control mangowm programmatically using mmsg.
 ---
-
-import { Callout } from 'fumadocs-ui/components/callout';
 
 ## Introduction
 
-MangoWC includes a powerful IPC (Inter-Process Communication) tool called `mmsg`. This allows you to query the window manager's state, watch for events, and execute commands from external scripts.
+mangowm includes a powerful IPC (Inter-Process Communication) tool called `mmsg`. This allows you to query the window manager's state, watch for events, and execute commands from external scripts.
 
 ## Basic Usage
 
 The general syntax for `mmsg` is:
 
 ```bash
-mmsg [options] [arguments]
+mmsg [-OTLq]
+mmsg [-o <output>] -s [-t <tags>] [-l <layout>] [-c <tags>] [-d <cmd>,<arg1>,<arg2>,<arg3>,<arg4>,<arg5>]
+mmsg [-o <output>] (-g | -w) [-OotlcvmfxekbA]
 ```
 
 ### Options
 
 | Flag | Description |
 | :--- | :--- |
-| `-q` | Quit MangoWC. |
+| `-q` | Quit mangowm. |
 | `-g` | **Get** values (tags, layout, focused client). |
 | `-s` | **Set** values (switch tags, layouts). |
 | `-w` | **Watch** mode (streams events). |
@@ -64,7 +64,7 @@ mmsg -s -t 2^
 
 ### Layouts
 
-Switch layouts programmatically. Layout codes: `S` (Scroller), `T` (Tile), `G` (Grid), `M` (Monocle), `K` (Deck), `VS` (Vertical Scroller), `VT` (Vertical Tile), `CT` (Center Tile).
+Switch layouts programmatically. Layout codes: `S` (Scroller), `T` (Tile), `G` (Grid), `M` (Monocle), `K` (Deck), `CT` (Center Tile), `RT` (Right Tile), `VS` (Vertical Scroller), `VT` (Vertical Tile), `VG` (Vertical Grid), `VK` (Vertical Deck), `TG` (TGMix).
 
 ```bash
 # Switch to Scroller
@@ -100,7 +100,7 @@ Use `-g` or `-w` to build custom status bars or automation scripts.
 # Watch for all message changes
 mmsg -w
 
-# Get all message without watch
+# Get all messages without watch
 mmsg -g
 
 # Watch focused client appid and title
@@ -120,6 +120,9 @@ mmsg -g -k
 
 # Get current keybind mode
 mmsg -g -b
+
+# Get scale factor of current monitor
+mmsg -g -A
 ```
 
 #### Tag Message Format
@@ -127,6 +130,7 @@ mmsg -g -b
 - State: 0 → none, 1 → active, 2 → urgent
 
 Example output:
+
 | Monitor | Tag Number | Tag State | Clients in Tag | Focused Client |
 |---------|------------|-----------|----------------|----------------|
 | eDP-1   | tag 2      | 0         | 1              | 0              |
@@ -148,4 +152,3 @@ wlr-randr --output HEADLESS-1 --pos 1920,0 --mode 1920x1080@60Hz
 
 # Destroy all virtual outputs
 mmsg -d destroy_all_virtual_output
-```

@@ -3,11 +3,9 @@ title: Input Devices
 description: Configure keyboard layouts, mouse sensitivity, and touchpad gestures.
 ---
 
-import { Callout } from 'fumadocs-ui/components/callout';
-
 ## Device Configuration
 
-MangoWC provides granular control over different input devices.
+mangowm provides granular control over different input devices.
 
 ### Keyboard Settings
 
@@ -25,6 +23,7 @@ Control key repeat rates and layout rules.
 | `xkb_rules_options` | `string` | - | XKB options (e.g., `caps:escape`, `ctrl:nocaps`). |
 
 **Example:**
+
 ```ini
 repeat_rate=40
 repeat_delay=300
@@ -56,6 +55,35 @@ Specific settings for laptop touchpads. Some settings may require a relogin to t
 
 ---
 
+**Detailed descriptions:**
+
+- `scroll_method` values:
+  - `0` — Never send scroll events (no scrolling).
+  - `1` — Two-finger scrolling: send scroll events when two fingers are logically down on the device.
+  - `2` — Edge scrolling: send scroll events when a finger moves along the bottom or right edge.
+  - `4` — Button scrolling: send scroll events when a button is held and the device moves along a scroll axis.
+
+- `click_method` values:
+  - `0` — No software click emulation.
+  - `1` — Button areas: use software-defined areas on the touchpad to generate button events.
+  - `2` — Clickfinger: the number of fingers determines which button is pressed.
+
+- `accel_profile` values:
+  - `0` — No acceleration.
+  - `1` — Flat: no dynamic acceleration. Pointer speed = original input speed × (1 + `accel_speed`).
+  - `2` — Adaptive: slow movement results in less acceleration, fast movement results in more.
+
+- `button_map` values:
+  - `0` — 1/2/3 finger tap maps to left / right / middle.
+  - `1` — 1/2/3 finger tap maps to left / middle / right.
+
+- `send_events_mode` values:
+  - `0` — Send events from this device normally.
+  - `1` — Do not send events from this device.
+  - `2` — Disable this device when an external pointer device is plugged in.
+
+---
+
 ### Mouse Settings
 
 Configuration for external mice.
@@ -73,15 +101,38 @@ Configuration for external mice.
 
 ---
 
+---
+
+## Keyboard Layout Switching
+
+To bind multiple layouts and toggle between them, define the layouts in `xkb_rules_layout` and use `xkb_rules_options` to set a toggle key combination. Then bind `switch_keyboard_layout` to trigger a switch.
+
+```ini
+# Define two layouts: US QWERTY and US Dvorak
+xkb_rules_layout=us,us
+xkb_rules_variant=,dvorak
+xkb_rules_options=grp:lalt_lshift_toggle
+```
+
+Or bind it manually to a key:
+
+```ini
+# Bind Alt+Shift_L to cycle keyboard layout
+bind=alt,shift_l,switch_keyboard_layout
+```
+
+Use `mmsg -g -k` to query the current keyboard layout at any time.
+
+---
+
 ## Input Method Editor (IME)
 
 To use Fcitx5 or IBus, set these environment variables in your config file.
 
-<Callout type="info">
-  These settings require a restart of the window manager to take effect.
-</Callout>
+> **Info:** These settings require a restart of the window manager to take effect.
 
 **For Fcitx5:**
+
 ```ini
 env=GTK_IM_MODULE,fcitx
 env=QT_IM_MODULE,fcitx
@@ -91,6 +142,7 @@ env=GLFW_IM_MODULE,ibus
 ```
 
 **For IBus:**
+
 ```ini
 env=GTK_IM_MODULE,ibus
 env=QT_IM_MODULE,ibus

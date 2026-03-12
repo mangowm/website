@@ -1,17 +1,13 @@
 ---
 title: Status Bar
-description: Configure Waybar for MangoWC.
+description: Configure Waybar for mangowm.
 ---
-
-import { Callout } from 'fumadocs-ui/components/callout';
 
 ## Module Configuration
 
-MangoWC is compatible with Waybar's `ext/workspaces` module (Wayland standard) or the `dwl/tags` module. We recommend `ext/workspaces` for the best experience.
+mangowm is compatible with Waybar's `ext/workspaces` module (Wayland standard) or the `dwl/tags` module. We recommend `ext/workspaces` for the best experience.
 
-<Callout type="tip">
-You can also use the `dwl/tags` module, but `ext/workspaces` provides better integration with MangoWC's features.
-</Callout>
+> **Tip:** You can also use the `dwl/tags` module, but `ext/workspaces` provides better integration with mangowm's features. The `ext/workspaces` module requires **Waybar > 0.14.0**.
 
 ### `config.jsonc`
 
@@ -142,6 +138,4 @@ You can style the tags using standard CSS in `style.css`.
 
 ## Complete Configuration Example
 
-<Callout type="tip">
-You can find a complete Waybar configuration for MangoWC at [waybar-config](https://github.com/DreamMaoMao/waybar-config).
-</Callout>
+> **Tip:** You can find a complete Waybar configuration for mangowm at [waybar-config](https://github.com/DreamMaoMao/waybar-config).

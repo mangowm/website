@@ -22,10 +22,10 @@ description: Advanced settings for XWayland, focus behavior, and system integrat
 | `warpcursor` | `1` | Warp the cursor to the center of the window when focus changes via keyboard. |
 | `cursor_hide_timeout` | `0` | Hide the cursor after `N` seconds of inactivity (`0` to disable). |
 | `drag_tile_to_tile` | `0` | Allow dragging a tiled window onto another to swap their positions. |
-| `drag_corner` | `3` | Corner for drag-to-tile detection (0: none, 1-3: corners, 4: auto-detect). |
+| `drag_corner` | `3` | Corner for drag-to-tile detection (0: none, 1–3: corners, 4: auto-detect). |
 | `drag_warp_cursor` | `1` | Warp cursor when dragging windows to tile. |
 | `axis_bind_apply_timeout` | `100` | Timeout (ms) for detecting consecutive scroll events for axis bindings. |
-| `axis_scroll_factor` | `1.0` | Scroll factor for axis scroll speed (0.1-10.0). |
+| `axis_scroll_factor` | `1.0` | Scroll factor for axis scroll speed (0.1–10.0). |
 
 ## Multi-Monitor & Tags
 
@@ -46,4 +46,6 @@ description: Advanced settings for XWayland, focus behavior, and system integrat
 | `enable_floating_snap` | `0` | Snap floating windows to edges or other windows. |
 | `snap_distance` | `30` | Max distance (pixels) to trigger floating snap. |
 | `no_border_when_single` | `0` | Remove window borders when only one window is visible on the tag. |
-| `idleinhibit_ignore_visible` | `0` | Allow invisible clients (e.g., background audio players) to inhibit idle.
+| `idleinhibit_ignore_visible` | `0` | Allow invisible clients (e.g., background audio players) to inhibit idle. |
+| `drag_tile_refresh_interval` | `8.0` | Interval (1.0–16.0) to refresh tiled window resize during drag. Too small may cause application lag. |
+| `drag_floating_refresh_interval` | `8.0` | Interval (1.0–16.0) to refresh floating window resize during drag. Too small may cause application lag. |

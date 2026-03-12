@@ -3,8 +3,6 @@ title: Window Effects
 description: Add visual polish with blur, shadows, and opacity.
 ---
 
-import { Callout } from 'fumadocs-ui/components/callout';
-
 ## Blur
 
 Blur creates a frosted glass effect for transparent windows.
@@ -13,7 +11,7 @@ Blur creates a frosted glass effect for transparent windows.
 | :--- | :--- | :--- |
 | `blur` | `0` | Enable blur for windows. |
 | `blur_layer` | `0` | Enable blur for layer surfaces (like bars/docks). |
-| `blur_optimized` | `1` | Caches the background to reduce GPU usage. **Highly recommended.** |
+| `blur_optimized` | `1` | Caches the wallpaper and blur background, significantly reducing GPU usage. Disabling it will significantly increase GPU consumption and may cause rendering lag. **Highly recommended.** |
 | `blur_params_radius` | `5` | The strength (radius) of the blur. |
 | `blur_params_num_passes` | `1` | Number of passes. Higher = smoother but more expensive. |
 | `blur_params_noise` | `0.02` | Blur noise level. |
@@ -21,11 +19,9 @@ Blur creates a frosted glass effect for transparent windows.
 | `blur_params_contrast` | `0.9` | Blur contrast adjustment. |
 | `blur_params_saturation` | `1.2` | Blur saturation adjustment. |
 
+> **Warning:** Blur has a relatively high impact on performance. If your hardware is limited, it is not recommended to enable it. If you experience lag with blur on, ensure `blur_optimized=1` — disabling it will significantly increase GPU consumption and may cause rendering lag. To disable blur entirely, set `blur=0`.
 
-
-<Callout type="warn">
-  Blur has a high impact on performance. If you experience lag, try disabling it or ensuring `blur_optimized` is set to `1`.
-</Callout>
+---
 
 ## Shadows
 
@@ -54,7 +50,7 @@ shadows_position_y=0
 shadowscolor=0x000000ff
 ```
 
-
+---
 
 ## Opacity & Corner Radius
 

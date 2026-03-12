@@ -3,21 +3,22 @@ title: Monitors
 description: Manage display outputs, resolution, scaling, and tearing.
 ---
 
-import { Callout } from 'fumadocs-ui/components/callout';
-
 ## Monitor Rules
 
 You can configure each display output individually using the `monitorrule` keyword.
 
 **Syntax:**
+
 ```ini
 monitorrule=name:Values,Parameter:Values,Parameter:Values
 ```
 
+> **Info:** If any of the matching fields (`name`, `make`, `model`, `serial`) are set, **all** of the set ones must match to be considered a match. Use `wlr-randr` to get your monitor's name, make, model, and serial.
+
 ### Parameters
 
 | Parameter | Type | Values | Description |
-|-----------|------|--------|-------------|
+| :--- | :--- | :--- | :--- |
 | `name` | string | Any | Match by monitor name (supports regex) |
 | `make` | string | Any | Match by monitor manufacturer |
 | `model` | string | Any | Match by monitor model |
@@ -28,8 +29,9 @@ monitorrule=name:Values,Parameter:Values,Parameter:Values
 | `x` | integer | 0-99999 | X position |
 | `y` | integer | 0-99999 | Y position |
 | `scale` | float | 0.01-100.0 | Monitor scale |
-| `vrr` | integer | 0,1 | Enable variable refresh rate | 
+| `vrr` | integer | 0, 1 | Enable variable refresh rate |
 | `rr` | integer | 0-7 | Monitor transform |
+| `custom` | integer | 0, 1 | Enable custom mode (not supported on all displays — may cause black screen) |
 
 ### Transform Values
 
@@ -44,9 +46,7 @@ monitorrule=name:Values,Parameter:Values,Parameter:Values
 | `6` | Flip + 180° counter-clockwise |
 | `7` | Flip + 270° counter-clockwise |
 
-<Callout type="error" style={{ '--callout-color': '#dc2626' }} title="Critical: XWayland & Coordinates">
-If you use XWayland applications, **never use negative coordinates** for your monitor positions. This is a known XWayland bug that causes click events to malfunction. Always arrange your monitors starting from `0,0` and extending into positive coordinates.
-</Callout>
+> **Critical:** If you use XWayland applications, **never use negative coordinates** for your monitor positions. This is a known XWayland bug that causes click events to malfunction. Always arrange your monitors starting from `0,0` and extend into positive coordinates.
 
 ### Examples
 
@@ -54,9 +54,43 @@ If you use XWayland applications, **never use negative coordinates** for your mo
 # Laptop display: 1080p, 60Hz, positioned at origin
 monitorrule=name:eDP-1,width:1920,height:1080,refresh:60,x:0,y:10
 
+# Match by make and model instead of name
+monitorrule=make:Chimei Innolux Corporation,model:0x15F5,width:1920,height:1080,refresh:60,x:0,y:0
+
 # Virtual monitor with pattern matching
 monitorrule=name:HEADLESS-.*,width:1920,height:1080,refresh:60,x:1926,y:0,scale:1,rr:0,vrr:0
 ```
+
+---
+
+## Monitor Spec Format
+
+Several commands (`focusmon`, `tagmon`, `disable_monitor`, `enable_monitor`, `toggle_monitor`, `viewcrossmon`, `tagcrossmon`) accept a **monitor_spec** string to identify a monitor.
+
+**Format:**
+
+```text
+name:xxx&&make:xxx&&model:xxx&&serial:xxx
+```
+
+- Any field can be omitted and there is no order requirement.
+- If all fields are omitted, the string is treated as the monitor name directly (e.g., `eDP-1`).
+- Use `wlr-randr` to find your monitor's name, make, model, and serial.
+
+**Examples:**
+
+```bash
+# By name (shorthand)
+mmsg -d toggle_monitor,eDP-1
+
+# By make and model
+mmsg -d toggle_monitor,make:Chimei Innolux Corporation&&model:0x15F5
+
+# By serial
+mmsg -d toggle_monitor,serial:12345678
+```
+
+---
 
 ## Tearing (Game Mode)
 
@@ -69,12 +103,15 @@ Tearing allows games to bypass the compositor's VSync for lower latency.
 ### Configuration
 
 **Enable Globally:**
+
 ```ini
 allow_tearing=1
 ```
 
 **Enable per Window:**
+
 Use a window rule to force tearing for specific games.
+
 ```ini
 windowrule=force_tearing:1,title:vkcube
 ```
@@ -82,26 +119,44 @@ windowrule=force_tearing:1,title:vkcube
 ### Tearing Behavior Matrix
 
 | `force_tearing` \ `allow_tearing` | DISABLED (0) | ENABLED (1) | FULLSCREEN_ONLY (2) |
-|-----------------------------------|---------------|-------------|----------------------|
-| **UNSPECIFIED** (0)               | Not Allowed | Follows tearing_hint | Only fullscreen follows tearing_hint |
-| **ENABLED** (1)                   | Not Allowed | Allowed | Only fullscreen allowed |
-| **DISABLED** (2)                  | Not Allowed | Not Allowed | Not Allowed |
+| :--- | :--- | :--- | :--- |
+| **UNSPECIFIED** (0) | Not Allowed | Follows tearing_hint | Only fullscreen follows tearing_hint |
+| **ENABLED** (1) | Not Allowed | Allowed | Only fullscreen allowed |
+| **DISABLED** (2) | Not Allowed | Not Allowed | Not Allowed |
 
 ### Graphics Card Compatibility
 
-<Callout type="warn" title="Important">
-Some graphics cards require setting the `WLR_DRM_NO_ATOMIC` environment variable before mango starts to successfully enable tearing.
-</Callout>
+> **Warning:** Some graphics cards require setting the `WLR_DRM_NO_ATOMIC` environment variable before mango starts to successfully enable tearing.
 
 Add this to `/etc/environment` and reboot:
+
 ```bash
 WLR_DRM_NO_ATOMIC=1
 ```
 
 Or run mango with the environment variable:
+
 ```bash
 WLR_DRM_NO_ATOMIC=1 mango
 ```
+
+---
+
+## GPU Compatibility
+
+If mango cannot display correctly or shows a black screen, try selecting a specific GPU:
+
+```bash
+# Use a single GPU
+WLR_DRM_DEVICES=/dev/dri/card1 mango
+
+# Use multiple GPUs
+WLR_DRM_DEVICES=/dev/dri/card0:/dev/dri/card1 mango
+```
+
+Some GPUs have compatibility issues with `syncobj_enable=1` — it may crash apps like `kitty` that use syncobj. Set `WLR_DRM_NO_ATOMIC=1` in `/etc/environment` and reboot to resolve this.
+
+---
 
 ## Power Management
 
@@ -131,60 +186,68 @@ wlr-randr --output eDP-1 --on
 wlr-randr
 ```
 
+---
+
 ## Screen Scale
 
-### Not Using Global Scale (Recommended)
-- If you do not use XWayland apps, you can just use monitor rules or wlr-randr to set a global monitor scale.
+### Without Global Scale (Recommended)
 
-- If you are using some XWayland apps, I don't suggest you to set monitor scale.
+- If you do not use XWayland apps, you can use monitor rules or `wlr-randr` to set a global monitor scale.
+- If you are using XWayland apps, it is not recommended to set a global monitor scale.
 
-You can set scale like this, such as 1.4 factor.
+You can set scale like this, for example with a 1.4 factor.
 
-Dependencies:
+**Dependencies:**
+
 ```bash
 yay -S xorg-xrdb
 yay -S xwayland-satellite
 ```
 
-In config file:
+**In config file:**
+
 ```ini
 env=QT_AUTO_SCREEN_SCALE_FACTOR,1
 env=QT_WAYLAND_FORCE_DPI,140
 ```
 
-In autostart:
+**In autostart:**
+
 ```bash
 echo "Xft.dpi: 140" | xrdb -merge
 gsettings set org.gnome.desktop.interface text-scaling-factor 1.4
 ```
 
-Edit autostart:
+**Edit autostart for XWayland:**
+
 ```bash
-# start xwayland
+# Start xwayland
 /usr/sbin/xwayland-satellite :11 &
-# scale 1.4 for xwayland
+# Apply scale 1.4 for xwayland
 sleep 0.5s && echo "Xft.dpi: 140" | xrdb -merge
 ```
 
 ### Using xwayland-satellite to Prevent Blurry XWayland Apps
 
-If you use fractional scaling, you can use `xwayland-satellite` to automatically scale XWayland apps to prevent them from being blurry, for example with a scale of 1.4:
+If you use fractional scaling, you can use `xwayland-satellite` to automatically scale XWayland apps to prevent blurriness, for example with a scale of 1.4.
 
-Dependencies:
+**Dependencies:**
+
 ```bash
 yay -S xwayland-satellite
 ```
 
-In config file:
-```
-env = DISPLAY,:2
-exec = xwayland-satellite :2
+**In config file:**
+
+```ini
+env=DISPLAY,:2
+exec=xwayland-satellite :2
 monitorrule=name:eDP-1,width:1920,height:1080,refresh:60,x:0,y:0,scale:1.4,vrr:0,rr:0
 ```
 
-<Callout type="warn">
-Use a `DISPLAY` other than `1` to avoid conflicting with MangoWC.
-</Callout>
+> **Warning:** Use a `DISPLAY` value other than `:1` to avoid conflicting with mangowm.
+
+---
 
 ## Virtual Monitors
 
