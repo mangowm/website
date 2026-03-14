@@ -1,11 +1,23 @@
 ---
 title: Installation
-description: Install mangowm on Arch, Fedora, Gentoo, Guix System, NixOS, PikaOS, or build from source.
+description: Install mangowm on AerynOS, Arch, Fedora, Gentoo, Guix System, NixOS, PikaOS, or build from source.
 ---
 
 ## Package Installation
 
 mangowm is available as a pre-built package on several distributions. Choose your distribution below.
+
+---
+
+### AerynOS
+
+mangowm is available in the **AerynOS package repository**.
+
+You can install it using the `moss` package manager:
+
+```bash
+sudo moss install mangowm
+```
 
 ---
 
@@ -183,16 +195,12 @@ pikman install mangowc
 If your distribution isn't listed above, or you want the latest unreleased changes, you can build mangowm from source.
 
 > **Info:** Ensure the following dependencies are installed before proceeding:
-> - `glibc`
 > - `wayland`
 > - `wayland-protocols`
 > - `libinput`
 > - `libdrm`
 > - `libxkbcommon`
 > - `pixman`
-> - `git`
-> - `meson`
-> - `ninja`
 > - `libdisplay-info`
 > - `libliftoff`
 > - `hwdata`

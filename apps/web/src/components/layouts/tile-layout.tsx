@@ -2,190 +2,225 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import {
-  CARD_ACTIVE,
-  CARD_BASE,
-  CARD_INACTIVE,
-  CARD_TRANSITION,
-  TIMINGS,
-  TOTAL_DURATION,
+	CARD_ACTIVE,
+	CARD_BASE,
+	CARD_INACTIVE,
+	TIMINGS,
+	TOTAL_DURATION,
 } from "./constants";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-interface Rect {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-}
-
 interface TileLayoutProps {
-  orientation: "horizontal" | "vertical";
+	orientation: "horizontal" | "vertical";
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
-/**
- * TileLayout — classic master/stack tiling.
- *
- * Horizontal: master fills the left half; stack panes tile the right half.
- * Vertical:   master fills the top half; stack panes tile the bottom half.
- *
- * Phase guide:
- *  0  – init
- *  1  – 1 window (full screen)
- *  2  – 2 windows (master + 1 stack)
- *  3  – 3 windows (master + 2 stacked panes)
- *  4  – swap: window 1 ↔ window 3
- *  5  – return swap
- *  6  – 2 windows (window 3 gone)
- *  7  – 1 window  (window 2 gone)
- *  8  – hidden
- */
 export function TileLayout({ orientation }: TileLayoutProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const r1 = useRef<HTMLDivElement>(null);
-  const r2 = useRef<HTMLDivElement>(null);
-  const r3 = useRef<HTMLDivElement>(null);
+	const containerRef = useRef<HTMLDivElement>(null);
+	const r1 = useRef<HTMLDivElement>(null);
+	const r2 = useRef<HTMLDivElement>(null);
+	const r3 = useRef<HTMLDivElement>(null);
 
-  const [phase, setPhase] = useState(0);
-  const [loopKey, setLoopKey] = useState(0);
+	const [phase, setPhase] = useState(0);
+	const [loopKey, setLoopKey] = useState(0);
 
-  // Apply CSS transition once on mount
-  useEffect(() => {
-    for (const ref of [r1, r2, r3]) {
-      if (ref.current) ref.current.style.transition = CARD_TRANSITION;
-    }
-  }, []);
+	// Setup Transitions
+	useEffect(() => {
+		[r1, r2, r3].forEach((ref) => {
+			if (ref.current) {
+				ref.current.style.transition = "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)";
+			}
+		});
+	}, []);
 
-  // Position cards whenever phase or orientation changes
-  useEffect(() => {
-    const update = () => {
-      const container = containerRef.current;
-      if (!container) return;
+	// Main Logic
+	useEffect(() => {
+		const update = () => {
+			if (!containerRef.current) return;
+			const width = containerRef.current.clientWidth;
+			const height = containerRef.current.clientHeight;
+			const gap = 16;
 
-      const { clientWidth: width, clientHeight: height } = container;
-      const GAP = 16;
-      const isVert = orientation === "vertical";
+			// Horizontal Calculations (Master Left, Stack Right)
+			const h_halfW = (width - gap) / 2;
+			const h_halfH = (height - gap) / 2;
+			const h_rightX = h_halfW + gap;
+			const h_bottomY = h_halfH + gap;
 
-      const halfW = (width - GAP) / 2;
-      const halfH = (height - GAP) / 2;
-      const rightX = halfW + GAP;
-      const bottomY = halfH + GAP;
+			// Vertical Calculations (Master Top, Stack Bottom)
+			const v_halfW = (width - gap) / 2;
+			const v_halfH = (height - gap) / 2;
+			const v_rightX = v_halfW + gap;
+			const v_bottomY = v_halfH + gap;
 
-      const activeWindows =
-        phase >= 3 && phase <= 5
-          ? 3
-          : phase === 6 || phase === 2
-            ? 2
-            : phase >= 7 || phase === 1
-              ? 1
-              : 0;
+			const set = (
+				el: HTMLDivElement | null,
+				x: number,
+				y: number,
+				w: number,
+				h: number,
+				visible: boolean,
+				active: boolean,
+			) => {
+				if (!el) return;
+				el.style.left = `${x}px`;
+				el.style.top = `${y}px`;
+				el.style.width = `${w}px`;
+				el.style.height = `${h}px`;
 
-      const isSwap = phase === 4;
+				el.style.opacity = visible ? "1" : "0";
+				el.style.transform = visible ? "scale(1)" : "scale(0.9)";
+				el.className = cn(CARD_BASE, active ? CARD_ACTIVE : CARD_INACTIVE);
+			};
 
-      const focusedWindow = phase <= 1 ? 1 : phase === 2 ? 2 : phase <= 5 ? 3 : phase === 6 ? 2 : 1;
+			const isVert = orientation === "vertical";
 
-      // Build the three slot positions based on active count and orientation.
-      // pos0 = master, pos1 = stack-1, pos2 = stack-2
-      let pos0: Rect, pos1: Rect, pos2: Rect;
+			// --- Phase Logic ---
+			// 0: Init
+			// 1: Spawn 1
+			// 2: Spawn 2 (Split)
+			// 3: Spawn 3 (Split Stack)
+			// 4: Swap
+			// 5: Re-Swap (Back to normal)
+			// 6: Despawn 3
+			// 7: Despawn 2
+			// 8: Despawn 1
 
-      if (isVert) {
-        if (activeWindows === 1) {
-          pos0 = { x: 0, y: 0, w: width, h: height };
-          pos1 = { x: 0, y: bottomY, w: width, h: halfH }; // pre-calc for smooth exit
-          pos2 = { x: rightX, y: bottomY, w: halfW, h: halfH };
-        } else if (activeWindows === 2) {
-          pos0 = { x: 0, y: 0, w: width, h: halfH };
-          pos1 = { x: 0, y: bottomY, w: width, h: halfH };
-          pos2 = { x: rightX, y: bottomY, w: halfW, h: halfH };
-        } else {
-          pos0 = { x: 0, y: 0, w: width, h: halfH };
-          pos1 = { x: 0, y: bottomY, w: halfW, h: halfH };
-          pos2 = { x: rightX, y: bottomY, w: halfW, h: halfH };
-        }
-      } else {
-        if (activeWindows === 1) {
-          pos0 = { x: 0, y: 0, w: width, h: height };
-          pos1 = { x: rightX, y: 0, w: halfW, h: height }; // pre-calc for smooth exit
-          pos2 = { x: rightX, y: bottomY, w: halfW, h: halfH };
-        } else if (activeWindows === 2) {
-          pos0 = { x: 0, y: 0, w: halfW, h: height };
-          pos1 = { x: rightX, y: 0, w: halfW, h: height };
-          pos2 = { x: rightX, y: bottomY, w: halfW, h: halfH };
-        } else {
-          pos0 = { x: 0, y: 0, w: halfW, h: height };
-          pos1 = { x: rightX, y: 0, w: halfW, h: halfH };
-          pos2 = { x: rightX, y: bottomY, w: halfW, h: halfH };
-        }
-      }
+			// Determine Active Windows Count
+			let activeWindows = 0;
+			if (phase >= 1) activeWindows = 1;
+			if (phase >= 2) activeWindows = 2;
+			if (phase >= 3 && phase <= 5) activeWindows = 3;
+			if (phase === 6) activeWindows = 2;
+			if (phase >= 7) activeWindows = 1;
 
-      // ── Window 1 (master) ─────────────────────────────────────────────
-      setCard(
-        r1.current,
-        isSwap && activeWindows === 3 ? pos2 : pos0,
-        phase > 0 && phase < 8,
-        focusedWindow === 1,
-      );
+			// Determine Focus
+			let focusedWindow = 1;
+			if (phase === 2) focusedWindow = 2;
+			else if (phase >= 3 && phase <= 5)
+				focusedWindow = 3; // Keep focus on 3 during Swap & Return
+			else if (phase === 6)
+				focusedWindow = 2; // Focus 2 when 3 leaves
+			else if (phase >= 7) focusedWindow = 1; // Focus 1 when 2 leaves
 
-      // ── Window 2 (stack-1) ────────────────────────────────────────────
-      setCard(r2.current, pos1, phase >= 2 && phase < 7, focusedWindow === 2);
+			// Is Swap State?
+			const isSwap = phase === 4;
 
-      // ── Window 3 (stack-2) ────────────────────────────────────────────
-      setCard(
-        r3.current,
-        isSwap && activeWindows === 3 ? pos0 : pos2,
-        phase >= 3 && phase < 6,
-        focusedWindow === 3,
-      );
-    };
+			// --- Calculate Rects based on Orientation ---
 
-    update();
+			// Define standard positions (Normal State)
+			// Pos 0: Master
+			// Pos 1: Stack 1
+			// Pos 2: Stack 2
+			let pos0, pos1, pos2;
 
-    const ro = new ResizeObserver(update);
-    if (containerRef.current) ro.observe(containerRef.current);
-    return () => ro.disconnect();
-  }, [phase, orientation]);
+			if (isVert) {
+				// Vertical: Master Top
+				if (activeWindows === 1) {
+					pos0 = { x: 0, y: 0, w: width, h: height };
+					// Pre-calculate stack positions even if unused, to prevent jumping to 0,0 on exit
+					pos1 = { x: 0, y: v_bottomY, w: width, h: v_halfH };
+					pos2 = { x: v_rightX, y: v_bottomY, w: v_halfW, h: v_halfH };
+				} else if (activeWindows === 2) {
+					pos0 = { x: 0, y: 0, w: width, h: v_halfH };
+					pos1 = { x: 0, y: v_bottomY, w: width, h: v_halfH };
+					pos2 = { x: v_rightX, y: v_bottomY, w: v_halfW, h: v_halfH };
+				} else {
+					pos0 = { x: 0, y: 0, w: width, h: v_halfH };
+					pos1 = { x: 0, y: v_bottomY, w: v_halfW, h: v_halfH };
+					pos2 = { x: v_rightX, y: v_bottomY, w: v_halfW, h: v_halfH };
+				}
+			} else {
+				// Horizontal: Master Left
+				if (activeWindows === 1) {
+					pos0 = { x: 0, y: 0, w: width, h: height };
+					// Pre-calculate stack positions
+					pos1 = { x: h_rightX, y: 0, w: h_halfW, h: height };
+					pos2 = { x: h_rightX, y: h_bottomY, w: h_halfW, h: h_halfH };
+				} else if (activeWindows === 2) {
+					pos0 = { x: 0, y: 0, w: h_halfW, h: height };
+					pos1 = { x: h_rightX, y: 0, w: h_halfW, h: height };
+					pos2 = { x: h_rightX, y: h_bottomY, w: h_halfW, h: h_halfH };
+				} else {
+					pos0 = { x: 0, y: 0, w: h_halfW, h: height };
+					pos1 = { x: h_rightX, y: 0, w: h_halfW, h: h_halfH };
+					pos2 = { x: h_rightX, y: h_bottomY, w: h_halfW, h: h_halfH };
+				}
+			}
 
-  // Animation loop
-  useEffect(() => {
-    const timeouts = TIMINGS.map(({ phase: p, delay }) => setTimeout(() => setPhase(p), delay));
-    const loop = setTimeout(() => setLoopKey((k) => k + 1), TOTAL_DURATION);
-    return () => {
-      timeouts.forEach(clearTimeout);
-      clearTimeout(loop);
-    };
-  }, [loopKey]);
+			// --- Apply to Windows ---
 
-  return (
-    <div ref={containerRef} className="relative h-full w-full overflow-hidden p-4">
-      <div ref={r1} className="absolute opacity-0">
-        1
-      </div>
-      <div ref={r2} className="absolute opacity-0">
-        2
-      </div>
-      <div ref={r3} className="absolute opacity-0">
-        3
-      </div>
-    </div>
-  );
-}
+			// Window 1
+			let target1 = pos0;
+			if (isSwap && activeWindows === 3) target1 = pos2;
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+			set(
+				r1.current,
+				target1.x,
+				target1.y,
+				target1.w,
+				target1.h,
+				phase > 0 && phase < 8,
+				focusedWindow === 1,
+			);
 
-function setCard(
-  el: HTMLDivElement | null,
-  { x, y, w, h }: Rect,
-  visible: boolean,
-  active: boolean,
-) {
-  if (!el) return;
-  el.style.left = `${x}px`;
-  el.style.top = `${y}px`;
-  el.style.width = `${w}px`;
-  el.style.height = `${h}px`;
-  el.style.opacity = visible ? "1" : "0";
-  el.style.transform = visible ? "scale(1)" : "scale(0.9)";
-  el.className = cn(CARD_BASE, active ? CARD_ACTIVE : CARD_INACTIVE);
+			// Window 2
+			const target2 = pos1;
+			set(
+				r2.current,
+				target2.x,
+				target2.y,
+				target2.w,
+				target2.h,
+				phase >= 2 && phase < 7,
+				focusedWindow === 2,
+			);
+
+			// Window 3
+			let target3 = pos2;
+			if (isSwap && activeWindows === 3) target3 = pos0;
+
+			set(
+				r3.current,
+				target3.x,
+				target3.y,
+				target3.w,
+				target3.h,
+				phase >= 3 && phase < 6,
+				focusedWindow === 3,
+			);
+		};
+
+		update();
+		const ro = new ResizeObserver(update);
+		ro.observe(containerRef.current as Element);
+		return () => ro.disconnect();
+	}, [phase, orientation]);
+
+	// Loop Timing
+	useEffect(() => {
+		const timeouts = TIMINGS.map((t) =>
+			setTimeout(() => setPhase(t.phase), t.delay),
+		);
+		const loop = setTimeout(() => setLoopKey((k) => k + 1), TOTAL_DURATION);
+		return () => {
+			timeouts.forEach(clearTimeout);
+			clearTimeout(loop);
+		};
+	}, [loopKey]);
+
+	return (
+		<div
+			ref={containerRef}
+			className="relative h-full w-full overflow-hidden p-4"
+		>
+			<div ref={r1} className="absolute opacity-0">
+				1
+			</div>
+			<div ref={r2} className="absolute opacity-0">
+				2
+			</div>
+			<div ref={r3} className="absolute opacity-0">
+				3
+			</div>
+		</div>
+	);
 }

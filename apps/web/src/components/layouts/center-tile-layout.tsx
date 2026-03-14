@@ -2,189 +2,208 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import {
-  CARD_ACTIVE,
-  CARD_BASE,
-  CARD_INACTIVE,
-  CARD_TRANSITION,
-  TIMINGS,
-  TOTAL_DURATION,
+	CARD_ACTIVE,
+	CARD_BASE,
+	CARD_INACTIVE,
+	TIMINGS,
+	TOTAL_DURATION,
 } from "./constants";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-interface Rect {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-}
-
 interface CenterTileLayoutProps {
-  /** Reserved for future vertical variant; currently only affects gap math. */
-  orientation: "horizontal" | "vertical";
+	orientation: "horizontal" | "vertical";
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
-/**
- * CenterTileLayout — the master window sits in the centre column (2 units wide),
- * flanked by narrow side columns (1 unit each).
- *
- * Phase guide:
- *  0  – init
- *  1  – 1 window (centre only)
- *  2  – 2 windows (centre + right side)
- *  3  – 3 windows (centre + both sides)
- *  4  – swap: window 1 (centre) ↔ window 3 (right side)
- *  5  – return swap
- *  6  – 2 windows (window 3 gone)
- *  7  – 1 window  (window 2 gone)
- *  8  – hidden
- */
 export function CenterTileLayout({ orientation }: CenterTileLayoutProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const r1 = useRef<HTMLDivElement>(null);
-  const r2 = useRef<HTMLDivElement>(null);
-  const r3 = useRef<HTMLDivElement>(null);
+	const containerRef = useRef<HTMLDivElement>(null);
+	const r1 = useRef<HTMLDivElement>(null);
+	const r2 = useRef<HTMLDivElement>(null);
+	const r3 = useRef<HTMLDivElement>(null);
 
-  const [phase, setPhase] = useState(0);
-  const [loopKey, setLoopKey] = useState(0);
+	const [phase, setPhase] = useState(0);
+	const [loopKey, setLoopKey] = useState(0);
 
-  // Apply CSS transition once on mount
-  useEffect(() => {
-    for (const ref of [r1, r2, r3]) {
-      if (ref.current) ref.current.style.transition = CARD_TRANSITION;
-    }
-  }, []);
+	// Setup Transitions
+	useEffect(() => {
+		[r1, r2, r3].forEach((ref) => {
+			if (ref.current) {
+				ref.current.style.transition = "all 0.6s cubic-bezier(0.4, 0, 0.2, 1)";
+			}
+		});
+	}, []);
 
-  // Position cards whenever phase changes
-  useEffect(() => {
-    const update = () => {
-      const container = containerRef.current;
-      if (!container) return;
+	// Main Logic
+	useEffect(() => {
+		const update = () => {
+			if (!containerRef.current) return;
+			const width = containerRef.current.clientWidth;
+			const height = containerRef.current.clientHeight;
+			const gap = 16;
 
-      const { clientWidth: width, clientHeight: height } = container;
-      const GAP = 16;
+			const set = (
+				el: HTMLDivElement | null,
+				x: number,
+				y: number,
+				w: number,
+				h: number,
+				visible: boolean,
+				active: boolean,
+			) => {
+				if (!el) return;
+				el.style.left = `${x}px`;
+				el.style.top = `${y}px`;
+				el.style.width = `${w}px`;
+				el.style.height = `${h}px`;
+				el.style.opacity = visible ? "1" : "0";
+				el.style.transform = visible ? "scale(1)" : "scale(0.9)";
+				el.className = cn(CARD_BASE, active ? CARD_ACTIVE : CARD_INACTIVE);
+			};
 
-      // Column geometry: [side | gap | centre×2 | gap | side]
-      const availW = width - 2 * GAP;
-      const unit = availW / 4;
-      const sideW = unit;
-      const centreW = unit * 2;
+			// --- Geometry Calculations ---
+			const availWidth = width - 2 * gap;
+			const unit = availWidth / 4;
+			const sideW = unit;
+			const centerW = unit * 2;
 
-      const xLeft = 0;
-      const xCentre = sideW + GAP;
-      const xRight = sideW + centreW + 2 * GAP;
+			const xLeft = 0;
+			const xCenter = sideW + gap;
+			const xRight = sideW + centerW + 2 * gap;
 
-      // Returns [centre, left/right-2, right-3] positions for n active windows
-      const getLayout = (n: number): [Rect, Rect, Rect] => {
-        const centre: Rect = { x: xCentre, y: 0, w: centreW, h: height };
-        const rightSlot: Rect = { x: xRight, y: 0, w: sideW, h: height };
-        const leftSlot: Rect = { x: xLeft, y: 0, w: sideW, h: height };
+			const getLayout = (n: number) => {
+				const pos = [
+					{ x: 0, y: 0, w: 0, h: 0 },
+					{ x: 0, y: 0, w: 0, h: 0 },
+					{ x: 0, y: 0, w: 0, h: 0 },
+				];
 
-        if (n === 1) return [centre, rightSlot, rightSlot];
-        if (n === 2) return [centre, rightSlot, rightSlot];
-        return [centre, leftSlot, rightSlot];
-      };
+				if (n === 1) {
+					pos[0] = { x: xCenter, y: 0, w: centerW, h: height };
+				} else if (n === 2) {
+					pos[0] = { x: xCenter, y: 0, w: centerW, h: height };
+					pos[1] = { x: xRight, y: 0, w: sideW, h: height };
+				} else if (n === 3) {
+					pos[0] = { x: xCenter, y: 0, w: centerW, h: height };
+					pos[1] = { x: xLeft, y: 0, w: sideW, h: height };
+					pos[2] = { x: xRight, y: 0, w: sideW, h: height };
+				}
+				return pos;
+			};
 
-      const activeWindows =
-        phase >= 1 && phase < 7
-          ? phase >= 3 && phase <= 5
-            ? 3
-            : phase >= 2
-              ? 2
-              : 1
-          : phase >= 7
-            ? 1
-            : 0;
+			// --- Phase Logic ---
+			// 0: Init
+			// 1: Spawn 1
+			// 2: Spawn 2
+			// 3: Spawn 3
+			// 4: Swap
+			// 5: Return
+			// 6: Despawn 3
+			// 7: Despawn 2
+			// 8: Despawn 1
 
-      const isSwap = phase === 4;
+			// Active Windows
+			let activeWindows = 0;
+			if (phase >= 1) activeWindows = 1;
+			if (phase >= 2) activeWindows = 2;
+			if (phase >= 3 && phase <= 5) activeWindows = 3;
+			if (phase === 6) activeWindows = 2;
+			if (phase >= 7) activeWindows = 1;
 
-      const focusedWindow = phase <= 1 ? 1 : phase === 2 ? 2 : phase <= 5 ? 3 : phase === 6 ? 2 : 1;
+			// Swap Active (Only Phase 4)
+			const isSwap = phase === 4;
 
-      const [centrePos, w2Pos, w3Pos] = getLayout(activeWindows);
+			// --- Focus Logic ---
+			let focusedWindow = 1;
+			if (phase === 2) focusedWindow = 2;
+			else if (phase >= 3 && phase <= 5)
+				focusedWindow = 3; // Keep focus on 3 during Swap & Return
+			else if (phase === 6) focusedWindow = 2;
+			else if (phase >= 7) focusedWindow = 1;
 
-      // Off-screen fallback for hidden windows
-      const offRight: Rect = { x: width, y: 0, w: sideW, h: height };
+			const pos = getLayout(activeWindows);
+			const prePos = getLayout(1)[0];
 
-      // ── Window 1 (centre / master) ─────────────────────────────────────
-      if (activeWindows >= 1) {
-        setCard(
-          r1.current,
-          isSwap ? w3Pos : centrePos,
-          phase > 0 && phase < 8,
-          focusedWindow === 1,
-        );
-      } else {
-        setCard(r1.current, { x: xCentre, y: 0, w: centreW, h: height }, false, false);
-      }
+			// --- Apply Positions ---
 
-      // ── Window 2 (left side when 3-up, right side when 2-up) ──────────
-      if (activeWindows >= 2) {
-        setCard(r2.current, w2Pos, phase >= 2 && phase < 7, focusedWindow === 2);
-      } else {
-        setCard(r2.current, offRight, false, false);
-      }
+			// Window 1 (Center/Master)
+			if (activeWindows >= 1) {
+				const p = isSwap ? pos[2] : pos[0];
+				set(
+					r1.current,
+					p.x,
+					p.y,
+					p.w,
+					p.h,
+					phase > 0 && phase < 8,
+					focusedWindow === 1,
+				);
+			} else {
+				set(r1.current, xCenter, 0, centerW, height, false, false);
+			}
 
-      // ── Window 3 (right side) ──────────────────────────────────────────
-      if (activeWindows >= 3) {
-        setCard(
-          r3.current,
-          isSwap ? centrePos : w3Pos,
-          phase >= 3 && phase < 6,
-          focusedWindow === 3,
-        );
-      } else {
-        setCard(r3.current, offRight, false, false);
-      }
-    };
+			// Window 2 (Right -> Left)
+			if (activeWindows >= 2) {
+				const p = pos[1]; // Stays Left/Right depending on N, unaffected by swap logic usually
+				set(
+					r2.current,
+					p.x,
+					p.y,
+					p.w,
+					p.h,
+					phase >= 2 && phase < 7,
+					focusedWindow === 2,
+				);
+			} else {
+				set(r2.current, width, 0, sideW, height, false, false);
+			}
 
-    update();
+			// Window 3 (Right)
+			if (activeWindows >= 3) {
+				const p = isSwap ? pos[0] : pos[2];
+				set(
+					r3.current,
+					p.x,
+					p.y,
+					p.w,
+					p.h,
+					phase >= 3 && phase < 6,
+					focusedWindow === 3,
+				);
+			} else {
+				set(r3.current, width, 0, sideW, height, false, false);
+			}
+		};
 
-    const ro = new ResizeObserver(update);
-    if (containerRef.current) ro.observe(containerRef.current);
-    return () => ro.disconnect();
-  }, [phase]);
+		update();
+		const ro = new ResizeObserver(update);
+		ro.observe(containerRef.current as Element);
+		return () => ro.disconnect();
+	}, [phase]);
 
-  // Animation loop
-  useEffect(() => {
-    const timeouts = TIMINGS.map(({ phase: p, delay }) => setTimeout(() => setPhase(p), delay));
-    const loop = setTimeout(() => setLoopKey((k) => k + 1), TOTAL_DURATION);
-    return () => {
-      timeouts.forEach(clearTimeout);
-      clearTimeout(loop);
-    };
-  }, [loopKey]);
+	// Loop Timing
+	useEffect(() => {
+		const timeouts = TIMINGS.map((t) =>
+			setTimeout(() => setPhase(t.phase), t.delay),
+		);
+		const loop = setTimeout(() => setLoopKey((k) => k + 1), TOTAL_DURATION);
+		return () => {
+			timeouts.forEach(clearTimeout);
+			clearTimeout(loop);
+		};
+	}, [loopKey]);
 
-  return (
-    <div ref={containerRef} className="relative h-full w-full overflow-hidden p-4">
-      <div ref={r1} className="absolute opacity-0">
-        1
-      </div>
-      <div ref={r2} className="absolute opacity-0">
-        2
-      </div>
-      <div ref={r3} className="absolute opacity-0">
-        3
-      </div>
-    </div>
-  );
-}
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function setCard(
-  el: HTMLDivElement | null,
-  { x, y, w, h }: Rect,
-  visible: boolean,
-  active: boolean,
-) {
-  if (!el) return;
-  el.style.left = `${x}px`;
-  el.style.top = `${y}px`;
-  el.style.width = `${w}px`;
-  el.style.height = `${h}px`;
-  el.style.opacity = visible ? "1" : "0";
-  el.style.transform = visible ? "scale(1)" : "scale(0.9)";
-  el.className = cn(CARD_BASE, active ? CARD_ACTIVE : CARD_INACTIVE);
+	return (
+		<div
+			ref={containerRef}
+			className="relative h-full w-full overflow-hidden p-4"
+		>
+			<div ref={r1} className="absolute opacity-0">
+				1
+			</div>
+			<div ref={r2} className="absolute opacity-0">
+				2
+			</div>
+			<div ref={r3} className="absolute opacity-0">
+				3
+			</div>
+		</div>
+	);
 }

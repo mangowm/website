@@ -1,29 +1,22 @@
 {
-  "name": "mangowm.github.io",
-  "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "type": "module",
-  "scripts": {
-    "dev": "turbo dev",
-    "build": "turbo build",
-    "check-types": "turbo check-types",
-    "dev:native": "turbo -F native dev",
-    "dev:web": "turbo -F web dev",
-    "check": "oxlint && oxfmt --write"
-  },
-  "dependencies": {
-    "dotenv": "^17.2.2",
-    "zod": "^4.1.13"
-  },
-  "devDependencies": {
-    "@mangowm.github.io/config": "workspace:*",
-    "oxfmt": "^0.26.0",
-    "oxlint": "^1.41.0",
-    "turbo": "^2.6.3",
-    "typescript": "^5"
-  },
-  "packageManager": "bun@1.3.6"
+	"name": "mango-web",
+	"private": true,
+	"type": "module",
+	"workspaces": [
+		"apps/*"
+	],
+	"scripts": {
+		"check": "biome check --write .",
+		"dev": "turbo dev",
+		"build": "turbo build",
+		"check-types": "turbo check-types"
+	},
+	"dependencies": {
+		"update": "^0.7.4"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.4.4",
+		"turbo": "^2.8.12"
+	},
+	"packageManager": "bun@1.3.8"
 }
