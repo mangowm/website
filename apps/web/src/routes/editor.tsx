@@ -30,8 +30,11 @@ function EditorPage() {
           </svg>
           Back
         </Link>
-        <h1 className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl font-bold">
+        <h1 className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-baseline gap-2 text-xl font-bold">
           Editor
+          <span className="rounded-full bg-yellow-500/20 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-yellow-700 dark:text-yellow-400">
+            WIP
+          </span>
         </h1>
       </div>
       <div className="flex-1 overflow-hidden">
