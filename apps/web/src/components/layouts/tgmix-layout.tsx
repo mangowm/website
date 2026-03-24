@@ -12,9 +12,7 @@ interface Rect {
   h: number;
 }
 
-interface TgmixLayoutProps {
-  orientation: "horizontal" | "vertical";
-}
+interface TgmixLayoutProps {}
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -59,7 +57,7 @@ const TOTAL_DURATION = 10500;
  *  9   – 1 window
  *  10  – hidden
  */
-export function TgmixLayout({ orientation }: TgmixLayoutProps) {
+export function TgmixLayout({}: TgmixLayoutProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const r1 = useRef<HTMLDivElement>(null);
   const r2 = useRef<HTMLDivElement>(null);
@@ -76,14 +74,14 @@ export function TgmixLayout({ orientation }: TgmixLayoutProps) {
     }
   }, []);
 
-  // Position cards whenever phase or orientation changes
+  // Position cards whenever phase changes
   useEffect(() => {
     const update = () => {
       const container = containerRef.current;
       if (!container) return;
 
       const { clientWidth: width, clientHeight: height } = container;
-      const isVert = orientation === "vertical";
+
 
       const halfW = (width - GAP) / 2;
       const halfH = (height - GAP) / 2;
@@ -135,34 +133,18 @@ export function TgmixLayout({ orientation }: TgmixLayoutProps) {
       if (useTile) {
         let pos0: Rect, pos1: Rect, pos2: Rect;
 
-        if (isVert) {
-          if (activeWindows <= 1) {
-            pos0 = { x: 0, y: 0, w: width, h: height };
-            pos1 = { x: 0, y: bottomY, w: width, h: halfH };
-            pos2 = { x: rightX, y: bottomY, w: halfW, h: halfH };
-          } else if (activeWindows === 2) {
-            pos0 = { x: 0, y: 0, w: width, h: halfH };
-            pos1 = { x: 0, y: bottomY, w: width, h: halfH };
-            pos2 = { x: rightX, y: bottomY, w: halfW, h: halfH };
-          } else {
-            pos0 = { x: 0, y: 0, w: width, h: halfH };
-            pos1 = { x: 0, y: bottomY, w: halfW, h: halfH };
-            pos2 = { x: rightX, y: bottomY, w: halfW, h: halfH };
-          }
+        if (activeWindows <= 1) {
+          pos0 = { x: 0, y: 0, w: width, h: height };
+          pos1 = { x: rightX, y: 0, w: halfW, h: height };
+          pos2 = { x: rightX, y: bottomY, w: halfW, h: halfH };
+        } else if (activeWindows === 2) {
+          pos0 = { x: 0, y: 0, w: halfW, h: height };
+          pos1 = { x: rightX, y: 0, w: halfW, h: height };
+          pos2 = { x: rightX, y: bottomY, w: halfW, h: halfH };
         } else {
-          if (activeWindows <= 1) {
-            pos0 = { x: 0, y: 0, w: width, h: height };
-            pos1 = { x: rightX, y: 0, w: halfW, h: height };
-            pos2 = { x: rightX, y: bottomY, w: halfW, h: halfH };
-          } else if (activeWindows === 2) {
-            pos0 = { x: 0, y: 0, w: halfW, h: height };
-            pos1 = { x: rightX, y: 0, w: halfW, h: height };
-            pos2 = { x: rightX, y: bottomY, w: halfW, h: halfH };
-          } else {
-            pos0 = { x: 0, y: 0, w: halfW, h: height };
-            pos1 = { x: rightX, y: 0, w: halfW, h: halfH };
-            pos2 = { x: rightX, y: bottomY, w: halfW, h: halfH };
-          }
+          pos0 = { x: 0, y: 0, w: halfW, h: height };
+          pos1 = { x: rightX, y: 0, w: halfW, h: halfH };
+          pos2 = { x: rightX, y: bottomY, w: halfW, h: halfH };
         }
 
         setCard(r1.current, pos0, phase > 0 && phase < 10, focusedWindow === 1);
@@ -174,7 +156,7 @@ export function TgmixLayout({ orientation }: TgmixLayoutProps) {
 
         // ── Grid layout (4 windows) ────────────────────────────────────────
       } else {
-        const gridPos = buildGrid(4, width, height, orientation);
+        const gridPos = buildGrid(4, width, height, "horizontal");
 
         const w1Pos = isSwap ? gridPos[3] : gridPos[0];
         const w4Pos = isSwap ? gridPos[0] : gridPos[3];
@@ -191,7 +173,7 @@ export function TgmixLayout({ orientation }: TgmixLayoutProps) {
     const ro = new ResizeObserver(update);
     if (containerRef.current) ro.observe(containerRef.current);
     return () => ro.disconnect();
-  }, [phase, orientation]);
+  }, [phase]);
 
   // Animation loop
   useEffect(() => {

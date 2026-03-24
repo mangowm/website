@@ -230,7 +230,7 @@ export function MangoLayouts() {
         {activeLayout === "center-tile" && <CenterTileLayout orientation={orientation} />}
         {activeLayout === "right-tile" && <RightTileLayout />}
         {activeLayout === "monocle" && <MonocleLayout />}
-        {activeLayout === "tgmix" && <TgmixLayout orientation={orientation} />}
+        {activeLayout === "tgmix" && <TgmixLayout />}
       </div>
 
       {/* Active layout label */}
