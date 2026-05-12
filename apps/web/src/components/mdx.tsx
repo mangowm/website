@@ -1,9 +1,12 @@
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
+import { HmOptions, NixosOptions } from "@/components/nix-options";
 
 export function getMDXComponents(components?: MDXComponents) {
   return {
     ...defaultMdxComponents,
+    HmOptions,
+    NixosOptions,
     ...components,
   } satisfies MDXComponents;
 }

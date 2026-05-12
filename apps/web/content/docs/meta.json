@@ -12,6 +12,7 @@
 		"bindings",
 		"---Reference---",
 		"ipc",
-		"faq"
+		"faq",
+		"nix-module"
 	]
 }
