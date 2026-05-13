@@ -1,8 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { Editor } from "@/components/editor/Editor";
 import { createTitle } from "@/lib/site";
 
 export const Route = createFileRoute("/editor")({
+  beforeLoad: () => {
+    if (import.meta.env.PROD) throw redirect({ to: "/" });
+  },
   head: () => ({ meta: [{ title: createTitle("Editor") }] }),
   component: EditorPage,
 });
