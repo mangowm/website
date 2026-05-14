@@ -19,6 +19,7 @@
     "@tanstack/react-router": "1.169.2",
     "@tanstack/react-router-devtools": "1.166.13",
     "@tanstack/react-start": "1.167.65",
+    "@tanstack/start-static-server-functions": "^1.166.41",
     "animejs": "^4.3.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
