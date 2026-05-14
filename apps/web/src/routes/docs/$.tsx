@@ -29,6 +29,7 @@ export const Route = createFileRoute("/docs/$")({
     return data;
   },
   head: ({ loaderData }) => {
+    if (!loaderData) return {};
     const ogUrl = `/og/docs/${[...loaderData.slugs, "image.webp"].join("/")}`;
     return {
       meta: [{ property: "og:image", content: ogUrl }],
@@ -93,12 +94,14 @@ const clientLoader = browserCollections.docs.createClientLoader({
 
 function Page() {
   const { pageTree, slugs, path } = useFumadocsLoader(Route.useLoaderData());
-  const markdownUrl = `/docs/${slugs.join("/")}.md`;
+  const markdownUrl = `/docs/${slugs.length > 0 ? slugs.join("/") : "index"}.md`;
 
   return (
     <DocsLayout {...baseOptions()} tree={pageTree}>
       <a href={markdownUrl} hidden aria-hidden />
-      <Suspense>{clientLoader.useContent(path, { markdownUrl, path })}</Suspense>
+      <Suspense>
+        {clientLoader.useContent(path, { markdownUrl, path })}
+      </Suspense>
     </DocsLayout>
   );
 }
