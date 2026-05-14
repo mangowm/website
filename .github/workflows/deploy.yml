@@ -3,6 +3,8 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  repository_dispatch:
+    types: [showcase-updated]
 
 permissions:
   contents: read
@@ -18,7 +20,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'pnpm'
+          cache: "pnpm"
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter web build
       - uses: actions/upload-pages-artifact@v3

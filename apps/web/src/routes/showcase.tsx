@@ -3,6 +3,14 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import showcaseEntries from "../showcase.json";
 import { createTitle } from "@/lib/site";
 
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
 export const Route = createFileRoute("/showcase")({
   head: () => ({ meta: [{ title: createTitle("Showcase") }] }),
   component: Showcase,
@@ -85,20 +93,18 @@ function Lightbox({
               "0 0 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.06)",
           }}
         >
-          {!imgError
-            ? (
-              <img
-                src={entry.screenshot}
-                alt={`${entry.username}'s mangowm desktop`}
-                className="max-h-[80vh] max-w-[85vw] object-contain"
-                onError={() => setImgError(true)}
-              />
-            )
-            : (
-              <div className="flex h-[60vh] w-[70vw] items-center justify-center text-white/60">
-                Screenshot unavailable
-              </div>
-            )}
+          {!imgError ? (
+            <img
+              src={entry.screenshot}
+              alt={`${entry.username}'s mangowm desktop`}
+              className="max-h-[80vh] max-w-[85vw] object-contain"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <div className="flex h-[60vh] w-[70vw] items-center justify-center text-white/60">
+              Screenshot unavailable
+            </div>
+          )}
         </div>
 
         {/* Meta bar */}
@@ -116,6 +122,14 @@ function Lightbox({
           >
             @{entry.username}
           </a>
+          {entry.added && (
+            <>
+              <span className="h-3 w-px bg-white/15" />
+              <span className="text-white/40 text-[11px]">
+                {formatDate(entry.added)}
+              </span>
+            </>
+          )}
           <span className="h-3 w-px bg-white/15" />
           <a
             href={entry.dotfiles}
@@ -214,21 +228,19 @@ function ShowcaseCard({
         onClick={!imgError ? onOpen : undefined}
         className="relative aspect-video w-full overflow-hidden bg-fd-muted text-left focus:outline-none"
       >
-        {!imgError
-          ? (
-            <img
-              src={entry.screenshot}
-              alt={`${entry.username} mangowm desktop`}
-              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-              loading="lazy"
-              onError={() => setImgError(true)}
-            />
-          )
-          : (
-            <div className="flex h-full w-full items-center justify-center bg-fd-muted text-fd-muted-foreground text-sm">
-              Screenshot unavailable
-            </div>
-          )}
+        {!imgError ? (
+          <img
+            src={entry.screenshot}
+            alt={`${entry.username} mangowm desktop`}
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+            loading="lazy"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-fd-muted text-fd-muted-foreground text-sm">
+            Screenshot unavailable
+          </div>
+        )}
 
         {/* Gradient overlay on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 transition-opacity duration-400 group-hover:opacity-100" />
@@ -246,14 +258,21 @@ function ShowcaseCard({
 
       {/* Footer */}
       <div className="flex items-center justify-between gap-3 border-t border-fd-border/40 bg-fd-card px-4 py-3">
-        <a
-          href={`https://github.com/${entry.username}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="truncate text-sm font-semibold text-fd-foreground transition-colors hover:text-fd-primary"
-        >
-          @{entry.username}
-        </a>
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <a
+            href={`https://github.com/${entry.username}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="truncate text-sm font-semibold text-fd-foreground transition-colors hover:text-fd-primary"
+          >
+            @{entry.username}
+          </a>
+          {entry.added && (
+            <span className="text-[10px] text-fd-muted-foreground/60">
+              {formatDate(entry.added)}
+            </span>
+          )}
+        </div>
 
         <a
           href={entry.dotfiles}
@@ -289,9 +308,9 @@ function Showcase() {
   const closeLightbox = useCallback(() => setLightboxIndex(null), []);
   const prevLightbox = useCallback(
     () =>
-      setLightboxIndex((
-        i,
-      ) => (i !== null ? (i - 1 + entries.length) % entries.length : null)),
+      setLightboxIndex((i) =>
+        i !== null ? (i - 1 + entries.length) % entries.length : null,
+      ),
     [entries.length],
   );
   const nextLightbox = useCallback(

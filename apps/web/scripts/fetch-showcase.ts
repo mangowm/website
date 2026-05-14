@@ -17,7 +17,21 @@ function toRawBase(dotfilesUrl: string): string {
   return `https://raw.githubusercontent.com${url.pathname}/main`;
 }
 
-type Entry = Record<string, string>; // username -> repo url
+/** Shape of each entry in entries.yml after bot stamping */
+type RawEntry = {
+  /** username is the only non-reserved key; value is the dotfiles URL */
+  [username: string]: string;
+  /** ISO timestamp stamped by the bot on merge */
+  added?: string;
+};
+
+/** Shape written to showcase.json */
+type ShowcaseEntry = {
+  username: string;
+  screenshot: string;
+  dotfiles: string;
+  added: string | null;
+};
 
 async function main() {
   console.log("Fetching showcase entries and downloading images...");
@@ -26,18 +40,25 @@ async function main() {
   if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
   const yamlText = await res.text();
-  const rawEntries: Entry[] = parse(yamlText) || [];
+  const rawEntries: RawEntry[] = parse(yamlText) || [];
 
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
   const imagesDir = path.resolve(__dirname, "../public/showcase");
   await fs.mkdir(imagesDir, { recursive: true });
 
-  const entries: { username: string; screenshot: string; dotfiles: string }[] =
-    [];
+  const entries: ShowcaseEntry[] = [];
 
   for (const item of rawEntries) {
-    const username = Object.keys(item)[0];
-    const dotfiles = item[username];
+    // The username key is whichever key is not "added"
+    const usernameKey = Object.keys(item).find((k) => k !== "added");
+    if (!usernameKey) {
+      console.warn("  ⚠ Skipping malformed entry (no username key):", item);
+      continue;
+    }
+
+    const username = usernameKey;
+    const dotfiles = item[usernameKey];
+    const added = item.added ?? null;
 
     const rawBase = toRawBase(dotfiles);
     const screenshotUrl = `${rawBase}/screenshot.png`;
@@ -63,8 +84,17 @@ async function main() {
       username,
       screenshot: `/showcase/${fileName}`,
       dotfiles,
+      added,
     });
   }
+
+  // Sort newest-first; entries without a timestamp go to the end
+  entries.sort((a, b) => {
+    if (!a.added && !b.added) return 0;
+    if (!a.added) return 1;
+    if (!b.added) return -1;
+    return b.added.localeCompare(a.added);
+  });
 
   await fs.writeFile(
     path.resolve(__dirname, "../src/showcase.json"),
