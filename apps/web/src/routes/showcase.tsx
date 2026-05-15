@@ -311,7 +311,10 @@ function Showcase() {
   const [activeTag, setActiveTag] = useState<string | null>(null);
 
   const allTags = useMemo(
-    () => Array.from(new Set(entries.flatMap((e) => e.tags ?? []))).sort(),
+    () =>
+      Array.from(new Set(entries.flatMap((e) => e.tags ?? [])))
+        .filter(Boolean)
+        .sort(),
     [entries],
   );
 
