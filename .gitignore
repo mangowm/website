@@ -43,6 +43,10 @@ lerna-debug.log*
 coverage
 .nyc_output
 
+# Build-time generated JSON
+releases.json
+showcase.json
+
 # Misc
 *.tgz
 .cache
