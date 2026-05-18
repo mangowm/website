@@ -53,8 +53,20 @@ function Lightbox({
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
-      if (e.key === "ArrowLeft") onPrev();
-      if (e.key === "ArrowRight") onNext();
+      if (e.key === "ArrowLeft") {
+        if (screenshotIndex > 0) {
+          setScreenshotIndex(screenshotIndex - 1);
+        } else {
+          onPrev();
+        }
+      }
+      if (e.key === "ArrowRight") {
+        if (screenshotIndex < screenshots.length - 1) {
+          setScreenshotIndex(screenshotIndex + 1);
+        } else {
+          onNext();
+        }
+      }
     };
     document.addEventListener("keydown", handler);
     document.body.style.overflow = "hidden";
@@ -62,7 +74,7 @@ function Lightbox({
       document.removeEventListener("keydown", handler);
       document.body.style.overflow = "";
     };
-  }, [onClose, onPrev, onNext]);
+  }, [onClose, onPrev, onNext, screenshotIndex, setScreenshotIndex, screenshots.length]);
 
   const NavButton = ({
     onClick,
@@ -256,13 +268,20 @@ function ShowcaseCard({
         disabled={imgError}
       >
         {!imgError ? (
-          <img
-            src={entry.screenshots?.[0]}
-            alt={`${entry.username}'s desktop`}
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-            loading="lazy"
-            onError={() => setImgError(true)}
-          />
+          <>
+            <img
+              src={entry.screenshots?.[0]}
+              alt={`${entry.username}'s desktop`}
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+              loading="lazy"
+              onError={() => setImgError(true)}
+            />
+            {(entry.screenshots?.length ?? 0) > 1 && (
+              <div className="absolute right-2 top-2 rounded-md border border-white/15 bg-black/60 px-2 py-1 text-xs font-medium text-white/80 backdrop-blur-sm">
+                1/{entry.screenshots!.length}
+              </div>
+            )}
+          </>
         ) : (
           <div className="flex h-full w-full items-center justify-center text-fd-muted-foreground text-sm">
             Screenshot unavailable
