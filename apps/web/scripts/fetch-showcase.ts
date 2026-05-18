@@ -54,13 +54,15 @@ async function main() {
 
     const screenshotNames: string[] = [];
 
-    const rootProbe = await fetch(`${rawBase}/screenshot.png`, { method: "HEAD" });
-    if (rootProbe.ok) screenshotNames.push("screenshot.png");
-
     for (let i = 1; i <= 10; i++) {
       const probe = await fetch(`${rawBase}/screenshots/${i}.png`, { method: "HEAD" });
       if (!probe.ok) break;
       screenshotNames.push(`${i}.png`);
+    }
+
+    if (screenshotNames.length === 0) {
+      const rootProbe = await fetch(`${rawBase}/screenshot.png`, { method: "HEAD" });
+      if (rootProbe.ok) screenshotNames.push("screenshot.png");
     }
 
     if (screenshotNames.length === 0) {
