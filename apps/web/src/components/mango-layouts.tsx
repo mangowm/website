@@ -14,6 +14,7 @@ import { OverviewLayout } from "./layouts/overview-layout";
 import { RightTileLayout } from "./layouts/right-tile-layout";
 import { ScrollerLayout } from "./layouts/scroller-layout";
 import { DwindleLayout } from "./layouts/dwindle-layout";
+import { FairLayout } from "./layouts/fair-layout";
 import { TileLayout } from "./layouts/tile-layout";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -27,7 +28,8 @@ type LayoutId =
   | "center-tile"
   | "right-tile"
   | "monocle"
-  | "dwindle";
+  | "dwindle"
+  | "fair";
 
 type Orientation = "horizontal" | "vertical";
 
@@ -43,6 +45,7 @@ const MAIN_LAYOUTS: LayoutDef[] = [
   { id: "tiling", label: "Tiling", supportsOrientation: true },
   { id: "scroller", label: "Scroller", supportsOrientation: true },
   { id: "grid", label: "Grid", supportsOrientation: true },
+  { id: "fair", label: "Fair", supportsOrientation: true },
 ];
 
 const OTHER_LAYOUTS: LayoutDef[] = [
@@ -230,6 +233,7 @@ export function MangoLayouts() {
         {activeLayout === "center-tile" && <CenterTileLayout orientation={orientation} />}
         {activeLayout === "right-tile" && <RightTileLayout />}
         {activeLayout === "monocle" && <MonocleLayout />}
+        {activeLayout === "fair" && <FairLayout orientation={orientation} />}
         {activeLayout === "dwindle" && <DwindleLayout orientation={orientation} />}
       </div>
 
