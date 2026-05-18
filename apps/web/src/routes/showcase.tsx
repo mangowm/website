@@ -218,11 +218,9 @@ function Lightbox({
 
 function ShowcaseCard({
   entry,
-  index: _index,
   onOpen,
 }: {
   entry: (typeof showcaseEntries)[0];
-  index: number;
   onOpen: () => void;
 }) {
   const [imgError, setImgError] = useState(false);
@@ -448,13 +446,18 @@ function Showcase() {
     [entries],
   );
 
-  const filteredEntries = useMemo(
-    () =>
+  const filteredEntries = useMemo(() => {
+    const filtered =
       activeTags.size === 0
         ? entries
-        : entries.filter((e) => e.tags?.some((t) => activeTags.has(t))),
-    [entries, activeTags],
-  );
+        : entries.filter((e) => e.tags?.some((t) => activeTags.has(t)));
+    return [...filtered].sort((a, b) => {
+      if (!a.added && !b.added) return 0;
+      if (!a.added) return 1;
+      if (!b.added) return -1;
+      return new Date(b.added).getTime() - new Date(a.added).getTime();
+    });
+  }, [entries, activeTags]);
 
   const toggleTag = useCallback((tag: string) => {
     setActiveTags((prev) => {
@@ -563,12 +566,7 @@ function Showcase() {
         {/* Grid */}
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {filteredEntries.map((entry, i) => (
-            <ShowcaseCard
-              key={entry.username}
-              entry={entry}
-              index={i}
-              onOpen={() => setLightboxIndex(i)}
-            />
+            <ShowcaseCard key={entry.username} entry={entry} onOpen={() => setLightboxIndex(i)} />
           ))}
         </div>
 
